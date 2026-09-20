@@ -1,0 +1,41 @@
+{
+  "status": "passed",
+  "acceptance_scope": "OpenAI API liveness; generated text is not scored",
+  "started_at": "2026-09-20T02:19:09.393956+00:00",
+  "completed_at": "2026-09-20T02:19:35.351469+00:00",
+  "source_commit": "fbe8a157fbdd4b2f813ae6395397232de97d5c5d",
+  "model_revision": "c1899de289a04d12100db370d81485cdf75e47ca",
+  "base_url": "http://127.0.0.1:8000",
+  "served_model": "qwen3-0.6b",
+  "server_version": "0.29.1rc1.dev405+gfbe8a157f",
+  "runtime_config": {
+    "dtype": "float16",
+    "max_model_len": 4096,
+    "gpu_memory_utilization": 0.8,
+    "max_num_seqs": 8,
+    "enforce_eager": true,
+    "generation_config": "vllm",
+    "sampler_backend": "native"
+  },
+  "checks": {
+    "health_http_status": 200,
+    "models_http_status": 200,
+    "version_http_status": 200,
+    "chat_http_status": 200
+  },
+  "advertised_models": [
+    "qwen3-0.6b"
+  ],
+  "prompt": "用一句话说明 vLLM 的 KV cache 有什么作用。",
+  "text": "VLLM 的 KV cache 用于加速模型推理过程，通过预计算和存储模型的键值对（Key-Value）对，减少重复计算和内存占用。",
+  "usage": {
+    "prompt_tokens": 25,
+    "total_tokens": 63,
+    "completion_tokens": 38,
+    "prompt_tokens_details": null,
+    "completion_tokens_details": null
+  },
+  "finish_reason": "stop",
+  "completion_seconds": 0.323,
+  "total_seconds": 25.959
+}

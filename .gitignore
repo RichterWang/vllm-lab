@@ -1,0 +1,16 @@
+# The upstream vLLM fork is an independent repository.
+src/vllm/
+
+# Local environments and caches.
+.venv/
+.cache/
+models/
+.env
+
+# Generated runtime artifacts.
+results/*.log
+results/*.pid
+results/*.tmp
+results/raw/
+__pycache__/
+*.py[cod]

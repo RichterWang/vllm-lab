@@ -1,0 +1,17 @@
+{
+    "cmake.sourceDirectory": "/home/minstrel/vllm_lab/src/vllm",
+    "python.defaultInterpreterPath": "${workspaceFolder}/src/vllm/.venv/bin/python",
+    "python.analysis.extraPaths": [
+        "${workspaceFolder}/src/vllm"
+    ],
+    "python.terminal.activateEnvironment": true,
+    "python.testing.pytestEnabled": true,
+    "python.testing.cwd": "${workspaceFolder}/src/vllm",
+    "python.testing.pytestArgs": [
+        "tests"
+    ],
+    "python.testing.unittestEnabled": false,
+    "terminal.integrated.env.linux": {
+        "HF_HOME": "${env:HOME}/.cache/huggingface"
+    }
+}
