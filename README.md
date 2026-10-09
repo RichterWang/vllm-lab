@@ -1,8 +1,7 @@
 # vLLM Lab
 
 这个仓库保存可重复运行的 vLLM 学习实验；真正的 vLLM fork 位于
-`src/vllm/`，并保持为一个独立 Git 仓库。这样实验脚本、模型配置和运行结果
-不会混入未来要提交给上游的 PR。
+`src/vllm/`，并保持为一个独立 Git 仓库。
 
 ## 目录
 
@@ -54,9 +53,3 @@ conda activate vllm-dev
 cd /home/minstrel/vllm_lab/src/vllm
 source .venv/bin/activate
 ```
-
-VS Code 应打开 `/home/minstrel/vllm_lab` 作为工作区；项目设置会选择
-`src/vllm/.venv/bin/python`，测试工作目录则指向 vLLM 源码仓库。
-
-从零重建环境见 `docs/environment_bootstrap.md`，源码阅读路线见
-`docs/architecture_walkthrough.md`。
