@@ -1,0 +1,41 @@
+version: 1
+
+# Keep the first checked-in matrix small enough for an 8 GiB RTX 3070 Ti.
+# Increase measured_requests to at least 20 before treating p95 as stable.
+defaults:
+  warmup_requests: 4
+  measured_requests: 20
+  request_timeout_seconds: 180
+  metrics_interval_seconds: 0.05
+  gpu_interval_seconds: 0.20
+  temperature: 0.0
+  ignore_eos: true
+  seed: 2026
+
+modes:
+  eager:
+    description: Fully eager execution; CUDA Graph is disabled.
+    server_args:
+      - --enforce-eager
+  default_hybrid:
+    description: vLLM defaults; inspect the server log for the resolved compilation/CUDA Graph mode.
+    server_args: []
+
+scenarios:
+  # First implementation/acceptance point.
+  - name: c4_in128_out128
+    concurrency: 4
+    input_tokens: 128
+    output_tokens: 128
+
+  # Small scaling baseline. Enable after the first scenario has passed.
+  - name: c1_in128_out128
+    concurrency: 1
+    input_tokens: 128
+    output_tokens: 128
+    enabled: false
+  - name: c8_in128_out128
+    concurrency: 8
+    input_tokens: 128
+    output_tokens: 128
+    enabled: false

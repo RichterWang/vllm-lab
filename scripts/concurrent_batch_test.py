@@ -28,7 +28,7 @@ TRACKED_METRICS = {
     "generation_tokens_total": "vllm:generation_tokens_total",
 }
 
-
+# get data stamp
 def utc_now() -> str:
     return datetime.now(UTC).isoformat()
 

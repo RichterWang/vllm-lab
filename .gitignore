@@ -8,9 +8,13 @@ models/
 .env
 
 # Generated runtime artifacts.
+/results
 results/*.log
 results/*.pid
 results/*.tmp
 results/raw/
 __pycache__/
 *.py[cod]
+
+# personal files
+personal/

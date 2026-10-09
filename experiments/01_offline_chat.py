@@ -12,11 +12,11 @@ LAB_ROOT = Path(__file__).resolve().parents[1]
 SOURCE_ROOT = LAB_ROOT / "src" / "vllm"
 RESULT_PATH = LAB_ROOT / "results" / "offline_chat.json"
 
-
+# get time stamp
 def utc_now() -> str:
     return datetime.now(UTC).isoformat()
 
-
+# get current git commit hash
 def source_commit() -> str:
     completed = subprocess.run(
         ["git", "rev-parse", "HEAD"],
@@ -27,7 +27,7 @@ def source_commit() -> str:
     )
     return completed.stdout.strip()
 
-
+# get GPU snapshot
 def gpu_snapshot() -> dict[str, str]:
     fields = "name,driver_version,memory.total,memory.used,memory.free,utilization.gpu"
     completed = subprocess.run(
@@ -43,9 +43,9 @@ def gpu_snapshot() -> dict[str, str]:
     )
     line = next(line for line in completed.stdout.splitlines() if line.strip())
     values = [value.strip() for value in line.split(",")]
-    return dict(zip(fields.split(","), values, strict=True))
+    return dict(zip(fields.split(","), values, strict=True)) # match key & value to a return dict
 
-
+# write result into json
 def write_result(result: dict[str, Any]) -> None:
     RESULT_PATH.parent.mkdir(parents=True, exist_ok=True)
     temporary_path = RESULT_PATH.with_suffix(".json.tmp")
@@ -55,11 +55,11 @@ def write_result(result: dict[str, Any]) -> None:
     )
     temporary_path.replace(RESULT_PATH)
 
-
+# run the offline chat test
 def run(started_at: str) -> dict[str, Any]:
     from vllm import LLM, SamplingParams, __version__ as vllm_version
 
-    model = os.environ["MODEL_ID"]
+    model = os.environ["MODEL_ID"] # get dict value
     revision = os.environ["MODEL_REVISION"]
     prompt = "用两句话解释 vLLM 的 continuous batching，并说明它为何提高吞吐量。"
 
@@ -71,7 +71,7 @@ def run(started_at: str) -> dict[str, Any]:
         dtype=os.environ["LAB_DTYPE"],
         max_model_len=int(os.environ["LAB_MAX_MODEL_LEN"]),
         gpu_memory_utilization=float(os.environ["LAB_GPU_MEMORY_UTILIZATION"]),
-        max_num_seqs=int(os.environ["LAB_MAX_NUM_SEQS"]),
+        max_num_seqs=int(os.environ["LAB_MAX_NUM_SEQS"]), # type switching
         enforce_eager=True,
         generation_config="vllm",
         trust_remote_code=False,
@@ -124,7 +124,6 @@ def run(started_at: str) -> dict[str, Any]:
         "gpu_after_load": loaded_gpu,
         "gpu_after_generation": generated_gpu,
     }
-
 
 def main() -> None:
     started_at = utc_now()

@@ -58,6 +58,5 @@ source .venv/bin/activate
 VS Code 应打开 `/home/minstrel/vllm_lab` 作为工作区；项目设置会选择
 `src/vllm/.venv/bin/python`，测试工作目录则指向 vLLM 源码仓库。
 
-完整验收结论见 `AGENT.md`，从零重建环境见
-`docs/environment_bootstrap.md`，源码阅读路线见
+从零重建环境见 `docs/environment_bootstrap.md`，源码阅读路线见
 `docs/architecture_walkthrough.md`。
