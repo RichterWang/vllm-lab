@@ -18,3 +18,6 @@ __pycache__/
 
 # personal files
 personal/
+
+# my memory files
+diagnose_remote_ssh_memory.py

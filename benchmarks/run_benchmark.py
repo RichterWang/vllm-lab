@@ -35,7 +35,7 @@ TRACKED_METRICS = {
 def utc_now() -> str:
     return datetime.now(UTC).isoformat()
 
-
+# get git commit hash
 def source_commit() -> str:
     completed = subprocess.run(
         ["git", "rev-parse", "HEAD"],
@@ -46,7 +46,7 @@ def source_commit() -> str:
     )
     return completed.stdout.strip()
 
-
+# get base url for the vLLM server
 def configured_base_url() -> str:
     if override := os.getenv("VLLM_BASE_URL"):
         return override.rstrip("/")
@@ -55,7 +55,7 @@ def configured_base_url() -> str:
         host = "127.0.0.1"
     return f"http://{host}:{os.getenv('LAB_PORT', '8000')}"
 
-
+# load the test scenarios combinations
 def load_matrix(path: Path) -> dict[str, Any]:
     payload = yaml.safe_load(path.read_text(encoding="utf-8"))
     if not isinstance(payload, dict) or payload.get("version") != 1:
@@ -173,7 +173,7 @@ async def gpu_snapshot(gpu_index: int) -> dict[str, float]:
         raise RuntimeError(f"Unexpected nvidia-smi output: {stdout.decode().strip()}")
     return dict(zip(("memory_used_mib", "memory_total_mib", "gpu_utilization_pct", "power_watts"), fields))
 
-
+# continuously poll GPU metrics until stop event is set, return all samples
 async def poll_gpu(
     stop: asyncio.Event,
     started: float,
@@ -193,7 +193,7 @@ async def poll_gpu(
             pass
     return samples
 
-
+# generate certain testing prompt（fixed length）
 def make_prompt(tokenizer: Any, target_tokens: int) -> tuple[str, int]:
     """Create a deterministic completion prompt with the requested token count."""
     if target_tokens < 8:
@@ -223,7 +223,6 @@ def make_prompt(tokenizer: Any, target_tokens: int) -> tuple[str, int]:
         else:
             return candidate, count
     return best_text, best_count
-
 
 @dataclass(frozen=True)
 class Scenario:
@@ -260,7 +259,9 @@ async def stream_request(
     request_index: int,
     measured_started: float,
 ) -> dict[str, Any]:
-    started = time.perf_counter()
+    started = time.perf_counter() # start counter
+
+    # initialize variables to track request state
     first_text_at: float | None = None
     finish_reason: str | None = None
     usage: dict[str, Any] | None = None
@@ -268,8 +269,10 @@ async def stream_request(
     text_parts: list[str] = []
     error: str | None = None
     status_code: int | None = None
+
+    # send the request to the server and stream the response
     try:
-        async with client.stream(
+        async with client.stream( # here send http request
             "POST",
             "/v1/completions",
             json={
@@ -280,47 +283,61 @@ async def stream_request(
                 "min_tokens": scenario.output_tokens,
                 "ignore_eos": scenario.ignore_eos,
                 "seed": scenario.seed + request_index,
-                "stream": True,
+                "stream": True, # set streaming response + SSE
                 "stream_options": {"include_usage": True},
             },
         ) as response:
             status_code = response.status_code
             response.raise_for_status()
+
+            # read the streaming response line by line and process the data
             async for line in response.aiter_lines():
                 if not line.startswith("data: "):
-                    continue
+                    continue # skip non-data lines
                 data = line[6:]
                 if data == "[DONE]":
-                    break
-                payload = json.loads(data)
+                    break # end of stream
+                payload = json.loads(data) # parse JSON payload
                 if payload.get("usage"):
-                    usage = payload["usage"]
+                    usage = payload["usage"] # only the last payload contains usage info
                 for choice in payload.get("choices", []):
                     text = choice.get("text") or ""
                     if text:
                         now = time.perf_counter()
+
+                        # TTFT
                         if first_text_at is None:
                             first_text_at = now
+
+                        # record text
                         text_parts.append(text)
+
+                        # token event for throughput calculation
                         token_events.append(
                             {
                                 "elapsed_seconds": now - started,
                                 "text_characters": len(text),
                             }
                         )
+
+                    # check if the request has finished and record the finish reason
                     if choice.get("finish_reason") is not None:
                         finish_reason = choice["finish_reason"]
+
     except (httpx.HTTPError, json.JSONDecodeError) as caught:
         error = f"{type(caught).__name__}: {caught}"
+
+    # record the end time of the request
     ended = time.perf_counter()
     completion_tokens = int((usage or {}).get("completion_tokens") or 0)
-    ttft = first_text_at - started if first_text_at is not None else None
-    e2e = ended - started
+    ttft = first_text_at - started if first_text_at is not None else None # TTFT
+    e2e = ended - started # E2E
     tpot = (
         (ended - first_text_at) / (completion_tokens - 1)
         if first_text_at is not None and completion_tokens > 1
         else None
-    )
+    ) # TPOT
+
     return {
         "request_index": request_index,
         "started_offset_seconds": started - measured_started,
@@ -337,6 +354,7 @@ async def stream_request(
     }
 
 
+# concurrently run multiple requests with a limit on concurrency
 async def run_requests(
     client: httpx.AsyncClient,
     model: str,
@@ -346,13 +364,13 @@ async def run_requests(
     concurrency: int,
     measured_started: float,
 ) -> list[dict[str, Any]]:
-    semaphore = asyncio.Semaphore(concurrency)
+    semaphore = asyncio.Semaphore(concurrency) # ues semaphore to limit concurrency
 
     async def limited(index: int) -> dict[str, Any]:
-        async with semaphore:
+        async with semaphore: # semaphore - 1
             return await stream_request(
                 client, model, prompt, scenario, index, measured_started
-            )
+            ) # index represents the request index
 
     return await asyncio.gather(*(limited(index) for index in range(count)))
 
@@ -369,6 +387,7 @@ def peak(samples: list[dict[str, Any]], key: str) -> float | None:
     return max(values) if values else None
 
 
+# run each scenario and collect metrics, write results to output directory
 async def run_scenario(
     mode: str,
     scenario: Scenario,
@@ -377,18 +396,25 @@ async def run_scenario(
 ) -> dict[str, Any]:
     base_url = configured_base_url()
     model = os.getenv("SERVED_MODEL_NAME", "qwen3-0.6b")
-    prompt, local_prompt_tokens = make_prompt(tokenizer, scenario.input_tokens)
+    prompt, local_prompt_tokens = make_prompt(tokenizer, scenario.input_tokens) # return actual prompt & nums of tokens
+
+    # set http connection pool limits based on concurrency
     limits = httpx.Limits(
         max_connections=max(16, scenario.concurrency + 4),
         max_keepalive_connections=max(8, scenario.concurrency),
     )
     async with httpx.AsyncClient(
+        # init https client
         base_url=base_url,
         timeout=scenario.request_timeout_seconds,
         limits=limits,
     ) as client:
+        
+        # check server health
         health = await client.get("/health")
         health.raise_for_status()
+
+        # check server model info
         if scenario.warmup_requests:
             warmups = await run_requests(
                 client,
@@ -402,10 +428,13 @@ async def run_scenario(
             if not all(row["ok"] for row in warmups):
                 raise RuntimeError(f"Warm-up failed for scenario {scenario.name}")
 
-        started_at = utc_now()
-        initial_engine = await metrics_snapshot(client)
-        started = time.perf_counter()
-        stop = asyncio.Event()
+        # conduct formal test
+        started_at = utc_now() # time stamp
+        initial_engine = await metrics_snapshot(client) # engine metrics before test
+        started = time.perf_counter() # counter start
+        stop = asyncio.Event() # stop signal
+
+        # start backend profiling tasks
         engine_task = asyncio.create_task(
             poll_engine_metrics(
                 client, stop, started, scenario.metrics_interval_seconds
@@ -419,6 +448,8 @@ async def run_scenario(
                 int(os.getenv("LAB_GPU_INDEX", "0")),
             )
         )
+
+        ## concurrently run requests and collect metrics until all requests are done
         try:
             requests = await run_requests(
                 client,
@@ -430,25 +461,36 @@ async def run_scenario(
                 started,
             )
         finally:
-            stop.set()
+            stop.set() # signal to stop metrics polling
             engine_samples, gpu_samples = await asyncio.gather(engine_task, gpu_task)
+
+        # calculate wall time and final engine metrics
         wall_seconds = time.perf_counter() - started
         final_engine = await metrics_snapshot(client)
 
+    # padding initial and final engine metrics to the samples for completeness
     engine_samples.insert(0, {"elapsed_seconds": 0.0, **initial_engine})
     engine_samples.append({"elapsed_seconds": wall_seconds, **final_engine})
 
+    # filter out valid requests and compute metrics
     valid = [row for row in requests if row["ok"]]
+
+    # get performance metrics from valid requests
     ttft = [float(row["ttft_seconds"]) for row in valid]
     e2e = [float(row["e2e_seconds"]) for row in valid]
     tpot = [float(row["tpot_seconds"]) for row in valid if row["tpot_seconds"] is not None]
+
+    # compute token counts from valid requests
     prompt_tokens = sum(int(row["usage"]["prompt_tokens"]) for row in valid)
     completion_tokens = sum(int(row["usage"]["completion_tokens"]) for row in valid)
+
+    # write scenario results to output directory
     scenario_dir = output_dir / scenario.name
     write_jsonl(scenario_dir / "requests.jsonl", requests)
     write_jsonl(scenario_dir / "engine_metrics.jsonl", engine_samples)
     write_jsonl(scenario_dir / "gpu_metrics.jsonl", gpu_samples)
 
+    # summarize the scenario results and write to summary.json
     summary = {
         "status": "passed" if len(valid) == scenario.measured_requests else "failed",
         "mode": mode,
@@ -498,11 +540,15 @@ async def run_scenario(
     return summary
 
 
+# main benchmark execution function
 async def benchmark_mode(args: argparse.Namespace) -> int:
+    # get test scenarios from matrix.yaml
     matrix = load_matrix(args.matrix)
     if args.mode not in matrix["modes"]:
         raise ValueError(f"Unknown mode: {args.mode}")
     defaults = matrix.get("defaults", {})
+
+    # load scenarios(fron matrix.yaml)
     scenarios = [
         Scenario.from_config(defaults, raw)
         for raw in matrix["scenarios"]
@@ -512,13 +558,17 @@ async def benchmark_mode(args: argparse.Namespace) -> int:
     if not scenarios:
         raise ValueError("No enabled scenarios selected")
 
+    # create output directory for the benchmark run
     output_dir = args.run_dir / args.mode
     output_dir.mkdir(parents=True, exist_ok=True)
+
+    # load tokenizer for prompt generation(tokenization_auto.py)
     tokenizer = AutoTokenizer.from_pretrained(
         os.environ["MODEL_ID"],
         revision=os.environ["MODEL_REVISION"],
         trust_remote_code=False,
     )
+
     manifest = {
         "schema_version": 1,
         "mode": args.mode,
@@ -530,14 +580,20 @@ async def benchmark_mode(args: argparse.Namespace) -> int:
         "started_at": utc_now(),
         "matrix": str(args.matrix.resolve()),
     }
+
+    # write in manifest.json(original data)
     atomic_json(output_dir / "manifest.json", manifest)
     summaries: list[dict[str, Any]] = []
+
+    ## for each scenario, run the benchmark and collect summaries
     for scenario in scenarios:
         print(f"[{args.mode}] running {scenario.name}", flush=True)
         summaries.append(
             await run_scenario(args.mode, scenario, output_dir, tokenizer)
         )
     manifest["completed_at"] = utc_now()
+
+    # update manifest status
     manifest["status"] = (
         "passed" if all(item["status"] == "passed" for item in summaries) else "failed"
     )
@@ -545,6 +601,7 @@ async def benchmark_mode(args: argparse.Namespace) -> int:
     return 0 if manifest["status"] == "passed" else 1
 
 
+# check command line arguments and build parser
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--matrix", type=Path, default=DEFAULT_MATRIX)
@@ -556,21 +613,22 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
+# main entrance
 def main() -> None:
-    args = build_parser().parse_args()
-    matrix = load_matrix(args.matrix)
-    if args.print_modes:
+    args = build_parser().parse_args() # parse command line arguments
+    matrix = load_matrix(args.matrix) # load benchmark matrix from YAML file
+    if args.print_modes: # print all available modes
         print("\n".join(matrix["modes"]))
         return
-    if args.print_mode_args:
+    if args.print_mode_args: # print server arguments for a specific mode
         mode = matrix["modes"].get(args.print_mode_args)
         if mode is None:
             raise SystemExit(f"Unknown mode: {args.print_mode_args}")
         print("\n".join(mode.get("server_args", [])))
         return
-    if not args.mode or not args.run_dir:
+    if not args.mode or not args.run_dir: # check params if valid
         raise SystemExit("--mode and --run-dir are required when running benchmarks")
-    raise SystemExit(asyncio.run(benchmark_mode(args)))
+    raise SystemExit(asyncio.run(benchmark_mode(args))) # core execute
 
 
 if __name__ == "__main__":
