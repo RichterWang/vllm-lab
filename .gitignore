@@ -1,5 +1,6 @@
 # The upstream vLLM fork is an independent repository.
 src/vllm/
+/worktrees/
 
 # Local environments and caches.
 .venv/

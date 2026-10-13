@@ -9,6 +9,7 @@
 - `docs/`：环境说明、源码调用链和后续阅读路线。
 - `experiments/`：直接调用 editable vLLM 的离线实验。
 - `scripts/`：下载、离线推理、启动服务和接口验收入口。
+- `benchmarks/kernels/issue60095/`：PR #60097 token-logprob kernel A/B 测试与结果分析。
 - `results/`：可纳入版本管理的精简验收结果；大体积日志被忽略。
 - `src/vllm/`：独立的 `vllm-project/vllm` fork。
 
