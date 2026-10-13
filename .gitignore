@@ -22,3 +22,11 @@ personal/
 
 # my memory files
 diagnose_remote_ssh_memory.py
+
+# my instruction file and AGENT file
+AGENT.md
+instruction.md
+interview.md
+
+temp_test.sh
+temp_test.py
