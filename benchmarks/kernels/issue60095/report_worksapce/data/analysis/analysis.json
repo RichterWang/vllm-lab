@@ -1,0 +1,23 @@
+{
+  "input_dir": "/workspace/vllm_lab/results/kernel/issue60095/repeats/run_20261014T130921_046128888",
+  "output_dir": "/workspace/vllm_lab/results/kernel/issue60095/repeats/run_20261014T130921_046128888/analysis_20261014T131438_664680",
+  "rounds": [
+    1,
+    2,
+    3
+  ],
+  "batches": [
+    1,
+    16,
+    32,
+    64,
+    128
+  ],
+  "gpu": "NVIDIA H200",
+  "runtime": [
+    "2.13.0+cu130",
+    "13.0",
+    "3.7.1"
+  ],
+  "comparison_rows": 15
+}

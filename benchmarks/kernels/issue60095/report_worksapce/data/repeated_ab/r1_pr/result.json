@@ -1,0 +1,113 @@
+{
+  "created_at": "2026-10-14T13:10:49.936049+00:00",
+  "vllm_root": "/workspace/vllm_lab/worktrees/vllm-60097-pr",
+  "vllm_module": "/workspace/vllm_lab/worktrees/vllm-60097-pr/vllm/v1/worker/gpu/sample/logprob.py",
+  "vllm_version": "0.29.1rc1.dev405+gfbe8a157f",
+  "commit": "0ddd6017793c943a2091a5800f0cbac1daaa3e02",
+  "gpu": "NVIDIA H200",
+  "gpu_properties": "_CudaDeviceProperties(name='NVIDIA H200', major=9, minor=0, total_memory=143155MB, multi_processor_count=132, uuid=bbb0f926-0420-e483-f690-54fec31a91e7, pci_bus_id=219, pci_device_id=0, pci_domain_id=0, L2_cache_size=60MB)",
+  "torch": "2.13.0+cu130",
+  "cuda_runtime": "13.0",
+  "triton": "3.7.1",
+  "settings": {
+    "vllm_root": "/workspace/vllm_lab/worktrees/vllm-60097-pr",
+    "binary_root": "/workspace/vllm_lab/src/vllm",
+    "output_dir": "/workspace/vllm_lab/results/kernel/issue60095/repeats/run_20261014T130921_046128888/r1_pr",
+    "full": false,
+    "select": [
+      1,
+      16,
+      32,
+      64,
+      128
+    ],
+    "vocab_sizes": [
+      151936
+    ],
+    "splits": "auto",
+    "num_logprobs": 6,
+    "dtype": "bfloat16",
+    "warmup": 10,
+    "graph_calls": 20,
+    "graph_replays": 10,
+    "batch_sizes": [
+      1,
+      16,
+      32,
+      64,
+      128
+    ]
+  },
+  "results": [
+    {
+      "commit": "0ddd6017793c943a2091a5800f0cbac1daaa3e02",
+      "implementation": "pr",
+      "batch_size": 1,
+      "vocab_size": 151936,
+      "num_logprobs": 6,
+      "dtype": "bfloat16",
+      "requested_splits": "auto",
+      "first_call_wall_ms": 710.4011196643114,
+      "correct": true,
+      "warm_wall_ms": 0.08211042732000351,
+      "cuda_graph_us": 8.017759919166565,
+      "status": "ok"
+    },
+    {
+      "commit": "0ddd6017793c943a2091a5800f0cbac1daaa3e02",
+      "implementation": "pr",
+      "batch_size": 16,
+      "vocab_size": 151936,
+      "num_logprobs": 6,
+      "dtype": "bfloat16",
+      "requested_splits": "auto",
+      "first_call_wall_ms": 0.19860733300447464,
+      "correct": true,
+      "warm_wall_ms": 0.08072098717093468,
+      "cuda_graph_us": 8.646240234375,
+      "status": "ok"
+    },
+    {
+      "commit": "0ddd6017793c943a2091a5800f0cbac1daaa3e02",
+      "implementation": "pr",
+      "batch_size": 32,
+      "vocab_size": 151936,
+      "num_logprobs": 6,
+      "dtype": "bfloat16",
+      "requested_splits": "auto",
+      "first_call_wall_ms": 3.944878466427326,
+      "correct": true,
+      "warm_wall_ms": 0.07796995341777802,
+      "cuda_graph_us": 14.015840291976929,
+      "status": "ok"
+    },
+    {
+      "commit": "0ddd6017793c943a2091a5800f0cbac1daaa3e02",
+      "implementation": "pr",
+      "batch_size": 64,
+      "vocab_size": 151936,
+      "num_logprobs": 6,
+      "dtype": "bfloat16",
+      "requested_splits": "auto",
+      "first_call_wall_ms": 2.009502612054348,
+      "correct": true,
+      "warm_wall_ms": 0.0776403583586216,
+      "cuda_graph_us": 25.256481170654297,
+      "status": "ok"
+    },
+    {
+      "commit": "0ddd6017793c943a2091a5800f0cbac1daaa3e02",
+      "implementation": "pr",
+      "batch_size": 128,
+      "vocab_size": 151936,
+      "num_logprobs": 6,
+      "dtype": "bfloat16",
+      "requested_splits": "auto",
+      "first_call_wall_ms": 2.311144955456257,
+      "correct": true,
+      "warm_wall_ms": 0.07936209440231323,
+      "cuda_graph_us": 47.115840911865234,
+      "status": "ok"
+    }
+  ]
+}
