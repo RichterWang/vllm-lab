@@ -1,0 +1,8 @@
+{
+  "folders": [
+    {"name": "vllm-lab (benchmarks)", "path": "."},
+    {"name": "vLLM candidate (edited)", "path": "worktrees/vllm-60097-pr"},
+    {"name": "vLLM PR reference (clean)", "path": "worktrees/vllm-60097-pr-reference"},
+    {"name": "vLLM baseline (clean)", "path": "worktrees/vllm-60097-base"}
+  ]
+}

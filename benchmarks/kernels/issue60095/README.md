@@ -1,5 +1,24 @@
 # Issue #60095 token-logprob benchmark
 
+## Directory map and current experiment
+
+The shared benchmark entry point is `bench_token_logprobs.py`. The original
+base/PR analysis is `run_repeated_ab.sh` and `analyze_repeats.py`, with its
+published H200 evidence in `report_h200_60097/`. The newer split-selection
+scripts and fixed-rule patch are in `split_selection/`; see its README for
+the entry points. The cumulative results, startup-autotune experiment, and
+H200 retest plan are in `end.md`. Raw new runs are under the ignored
+`results/kernel/issue60095/` tree.
+
+The lab repository and the edited vLLM candidate worktree currently use the
+same branch name, `codex/issue60095-split-selection`, but they are **two
+independent Git repositories**. `worktrees/vllm-60097-pr/` is the edited
+candidate, while `worktrees/vllm-60097-pr-reference/` is the clean PR
+reference. The `src/vllm/` checkout remains on its separate learning branch.
+Open `issue60095.code-workspace` from the lab root in VS Code to see all four
+folders and their Git state separately. No experiment files are committed or
+pushed automatically.
+
 This microbenchmark compares the original token-logprob kernel at the base
 commit with PR #60097's automatic and forced vocabulary split counts. It uses
 synthetic logits with the production Qwen vocabulary size and does not load a
@@ -8,13 +27,14 @@ with the same Python environment.
 
 ## Source worktrees
 
-The active learning checkout remains untouched. The two detached worktrees are
-registered in the main vLLM repository:
+The active learning checkout remains untouched. These worktrees share the
+underlying vLLM repository:
 
 - `worktrees/vllm-60097-base`: `d09ff7763747bbe7cd153edd8017479804f47be7`
-- `worktrees/vllm-60097-pr`: `0ddd6017793c943a2091a5800fcbac1daaa3e02`
+- `worktrees/vllm-60097-pr-reference`: clean detached PR reference at `0ddd6017793c943a2091a5800f0cbac1daaa3e02`.
+- `worktrees/vllm-60097-pr`: edited candidate on `codex/issue60095-split-selection`, based on the PR commit. Its directory name is historical; it is not the clean PR reference.
 
-Recreate them after removal with:
+Recreate the clean references after removal with:
 
 ```bash
 LAB_ROOT="$(git rev-parse --show-toplevel)"
@@ -22,8 +42,13 @@ git -C "$LAB_ROOT/src/vllm" fetch origin refs/pull/60097/head:refs/remotes/origi
 git -C "$LAB_ROOT/src/vllm" worktree add --detach \
   "$LAB_ROOT/worktrees/vllm-60097-base" d09ff7763747bbe7cd153edd8017479804f47be7
 git -C "$LAB_ROOT/src/vllm" worktree add --detach \
-  "$LAB_ROOT/worktrees/vllm-60097-pr" 0ddd6017793c943a2091a5800f0cbac1daaa3e02
+  "$LAB_ROOT/worktrees/vllm-60097-pr-reference" 0ddd6017793c943a2091a5800f0cbac1daaa3e02
 ```
+
+The candidate has **uncommitted local source edits**. Creating a new worktree
+from the PR commit will not recreate them. Keep it until its full changes are
+committed or exported. The older `split_selection/selector_candidate_sm86.patch`
+contains only the fixed-rule stage, not startup autotuning.
 
 On a fresh machine, clone the outer lab repository first, then clone vLLM into
 its ignored `src/vllm/` directory. The following commands assume the outer
@@ -37,7 +62,7 @@ git -C "$LAB_ROOT/src/vllm" fetch origin refs/pull/60097/head:refs/remotes/origi
 git -C "$LAB_ROOT/src/vllm" worktree add --detach \
   "$LAB_ROOT/worktrees/vllm-60097-base" d09ff7763747bbe7cd153edd8017479804f47be7
 git -C "$LAB_ROOT/src/vllm" worktree add --detach \
-  "$LAB_ROOT/worktrees/vllm-60097-pr" 0ddd6017793c943a2091a5800f0cbac1daaa3e02
+  "$LAB_ROOT/worktrees/vllm-60097-pr-reference" 0ddd6017793c943a2091a5800f0cbac1daaa3e02
 ```
 
 The exact source commits above are pinned so a later move of the PR branch does

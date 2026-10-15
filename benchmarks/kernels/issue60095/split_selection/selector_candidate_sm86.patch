@@ -1,0 +1,94 @@
+diff --git a/tests/v1/sample/test_logprobs.py b/tests/v1/sample/test_logprobs.py
+index ed349c69f3..ed1e65483e 100644
+--- a/tests/v1/sample/test_logprobs.py
++++ b/tests/v1/sample/test_logprobs.py
+@@ -1827,3 +1827,30 @@ def test_num_vocab_splits_heuristic(monkeypatch, num_sms, batch_size, vocab_size
+     # Split count depends on batch size, so batch-invariant mode disables it.
+     monkeypatch.setattr(envs, "VLLM_BATCH_INVARIANT", True, raising=False)
+     assert logprob_mod._get_num_vocab_splits(batch_size, vocab_size, dev) == 1
++
++
++def test_num_vocab_splits_measured_sm86_policy(monkeypatch):
++    import vllm.envs as envs
++    from vllm.v1.worker.gpu.sample import logprob as logprob_mod
++
++    monkeypatch.setattr(envs, "VLLM_BATCH_INVARIANT", False, raising=False)
++    monkeypatch.setattr(logprob_mod, "_get_num_compute_units", lambda _: 46)
++    monkeypatch.setattr(torch.cuda, "get_device_capability", lambda _: (8, 6))
++    dev = torch.device("cuda")
++    for batch_size, vocab_size, expected in (
++        (1, 3001, 1),
++        (1, 8192, 1),
++        (1, 32768, 4),
++        (1, 151936, 16),
++        (16, 151936, 64),
++        (17, 151936, 64),
++        (33, 49152, 2),
++        (49, 49152, 32),
++        (128, 151936, 16),
++    ):
++        assert logprob_mod._get_num_vocab_splits(batch_size, vocab_size, dev) == expected
++
++    monkeypatch.setattr(torch.cuda, "get_device_capability", lambda _: (9, 0))
++    assert logprob_mod._get_num_vocab_splits(128, 151936, dev) == 1
++    monkeypatch.setattr(envs, "VLLM_BATCH_INVARIANT", True, raising=False)
++    assert logprob_mod._get_num_vocab_splits(1, 151936, dev) == 1
+diff --git a/vllm/v1/worker/gpu/sample/logprob.py b/vllm/v1/worker/gpu/sample/logprob.py
+index d1b25da5ae..984974aa47 100644
+--- a/vllm/v1/worker/gpu/sample/logprob.py
++++ b/vllm/v1/worker/gpu/sample/logprob.py
+@@ -33,6 +33,12 @@ _BLOCK_SIZE = 1024
+ _SPLIT_TARGET_PROGRAMS_PER_SM = 2
+ _SPLIT_MIN_CHUNK_SIZE = 8192
+ _MAX_VOCAB_SPLITS = 64
++# Offline measured on a 46-SM sm86 GPU. Small workloads retain the original
++# choice because the extra launch overhead can outweigh device-time savings.
++# Other devices keep the original conservative heuristic.
++_MEASURED_SPLIT_TUNING = {(8, 6, 46): (64, 1024)}
++_MEASURED_SPLIT_MIN_VOCAB = 49152
++_MEASURED_SPLIT_MIN_LOGITS = 2_300_000
+ 
+ 
+ @triton.jit
+@@ -240,20 +246,32 @@ def _get_num_vocab_splits(
+ ) -> int:
+     """Number of programs to split each row's vocab across.
+ 
+-    One program per row leaves most SMs idle for small decode batches (the
+-    common case), so split each row across up to `_SPLIT_TARGET_PROGRAMS_PER_SM
+-    * num_SMs / batch_size` programs, each handling at least
+-    `_SPLIT_MIN_CHUNK_SIZE` logits. Returns 1 (the fused single-kernel path)
+-    when splitting would not help, and always under VLLM_BATCH_INVARIANT since
+-    the split count depends on the batch size and changes the FP32
+-    accumulation order.
++    One program per row leaves most SMs idle for small decode batches. The
++    default limits split programs by SM count and minimum chunk size; a measured
++    device/shape entry may use a more aggressive pair of limits. Returns 1 for
++    the fused path when splitting is not selected, and always under
++    VLLM_BATCH_INVARIANT because split count changes FP32 accumulation order.
+     """
+     if envs.VLLM_BATCH_INVARIANT:
+         return 1
+-    target_programs = _get_num_compute_units(device) * _SPLIT_TARGET_PROGRAMS_PER_SM
++    num_sms = _get_num_compute_units(device)
++    target_per_sm = _SPLIT_TARGET_PROGRAMS_PER_SM
++    min_chunk_size = _SPLIT_MIN_CHUNK_SIZE
++    if (
++        num_sms == 46
++        and device.type == "cuda"
++        and vocab_size >= _MEASURED_SPLIT_MIN_VOCAB
++        and batch_size * vocab_size >= _MEASURED_SPLIT_MIN_LOGITS
++    ):
++        tuning = _MEASURED_SPLIT_TUNING.get(
++            (*torch.cuda.get_device_capability(device), num_sms)
++        )
++        if tuning is not None:
++            target_per_sm, min_chunk_size = tuning
++    target_programs = num_sms * target_per_sm
+     num_splits = min(
+         target_programs // max(batch_size, 1),
+-        triton.cdiv(vocab_size, _SPLIT_MIN_CHUNK_SIZE),
++        triton.cdiv(vocab_size, min_chunk_size),
+         _MAX_VOCAB_SPLITS,
+     )
+     if num_splits < 2:

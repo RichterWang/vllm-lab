@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import hashlib
 import importlib
 import inspect
 import json
@@ -47,8 +48,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--num-logprobs", type=int, default=6)
     parser.add_argument("--dtype", choices=("bfloat16", "float16", "float32"), default="bfloat16")
     parser.add_argument("--warmup", type=int, default=10)
+    parser.add_argument("--wall-repetitions", type=int, default=10)
     parser.add_argument("--graph-calls", type=int, default=20)
     parser.add_argument("--graph-replays", type=int, default=10)
+    parser.add_argument("--initialize-autotune", action="store_true")
+    parser.add_argument("--autotune-cache-dir", type=Path)
     args = parser.parse_args()
     args.batch_sizes = args.select if args.select is not None else FULL_BATCH_SIZES
     return args
@@ -135,6 +139,19 @@ def main() -> None:
     print(f"[4/4] Running benchmark for batch sizes {args.batch_sizes}...", flush=True)
 
     dtype = getattr(torch, args.dtype)
+    autotune_result = None
+    if args.initialize_autotune:
+        if len(args.vocab_sizes) != 1:
+            raise ValueError("Autotune benchmark expects one vocabulary size")
+        from vllm.v1.worker.gpu.sample.logprob_autotune import (
+            initialize_split_autotune,
+        )
+
+        autotune_result = initialize_split_autotune(
+            args.vocab_sizes[0], dtype, args.num_logprobs, device,
+            args.autotune_cache_dir,
+        )
+        print("Autotune:", json.dumps(autotune_result), flush=True)
     commit = subprocess.run(
         ["git", "-C", str(vllm_root), "rev-parse", "HEAD"],
         check=True,
@@ -166,6 +183,16 @@ def main() -> None:
                 split_values = ["auto"]
 
             for split in split_values:
+                selector = getattr(module, "_get_num_vocab_splits", None)
+                effective_splits = (
+                    selector(
+                        batch_size, vocab_size, device,
+                        *([dtype, args.num_logprobs]
+                          if "dtype" in inspect.signature(selector).parameters else []),
+                    )
+                    if split == "auto" and selector is not None
+                    else int(split) if split != "auto" else None
+                )
                 record: dict[str, object] = {
                     "commit": commit,
                     "implementation": "pr" if "num_vocab_splits" in inspect.signature(fn).parameters else "base",
@@ -174,6 +201,7 @@ def main() -> None:
                     "num_logprobs": args.num_logprobs,
                     "dtype": args.dtype,
                     "requested_splits": split,
+                    "effective_splits": effective_splits,
                 }
                 call = make_call(fn, logits, token_ids, split)
                 try:
@@ -187,7 +215,9 @@ def main() -> None:
                     for _ in range(args.warmup):
                         call()
                     torch.cuda.synchronize()
-                    record["warm_wall_ms"] = synchronized_wall_latency(call, 10)
+                    record["warm_wall_ms"] = synchronized_wall_latency(
+                        call, args.wall_repetitions
+                    )
                     record["cuda_graph_us"] = cuda_graph_latency(
                         call, args.graph_calls, args.graph_replays
                     )
@@ -202,13 +232,33 @@ def main() -> None:
         "created_at": datetime.now(UTC).isoformat(),
         "vllm_root": str(vllm_root),
         "vllm_module": module.__file__,
+        "source_module_sha256": hashlib.sha256(
+            Path(module.__file__).read_bytes()
+        ).hexdigest(),
+        "benchmark_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+        "source_branch": subprocess.run(
+            ["git", "-C", str(vllm_root), "branch", "--show-current"],
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout.strip(),
+        "source_dirty": bool(
+            subprocess.run(
+                ["git", "-C", str(vllm_root), "status", "--porcelain"],
+                check=True,
+                capture_output=True,
+                text=True,
+            ).stdout.strip()
+        ),
         "vllm_version": vllm.__version__,
         "commit": commit,
         "gpu": torch.cuda.get_device_name(device),
         "gpu_properties": str(torch.cuda.get_device_properties(device)),
+        "gpu_sm_count": torch.cuda.get_device_properties(device).multi_processor_count,
         "torch": torch.__version__,
         "cuda_runtime": torch.version.cuda,
         "triton": triton.__version__,
+        "autotune": autotune_result,
         "settings": {
             key: str(value) if isinstance(value, Path) else value
             for key, value in vars(args).items()
