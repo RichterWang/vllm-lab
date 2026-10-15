@@ -25,8 +25,11 @@ diagnose_remote_ssh_memory.py
 
 # my instruction file and AGENT file
 AGENT.md
+!benchmarks/issue56455/AGENT.md
 instruction.md
 interview.md
 
 temp_test.sh
 temp_test.py
+
+end.md
