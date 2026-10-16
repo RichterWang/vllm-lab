@@ -1,0 +1,23 @@
+H200 source worktrees and remotes, checked 2026-10-16
+
+Candidate:
+  path: /workspace/vllm_lab/worktrees/vllm-60095-pr
+  branch: vllm-60095-pr
+  HEAD: 8730e4e1d2d6975cb3c8908fa998921f2161781a
+  status: clean
+  origin: https://github.com/RichterWang/vllm.git
+  upstream: https://github.com/vllm-project/vllm.git
+
+#60097 reference:
+  path: /workspace/vllm_lab/worktrees/vllm-60097-pr
+  HEAD: 0ddd6017793c943a2091a5800fcbac1daaa3e02
+  status: clean; detached HEAD at the tested PR commit
+
+Pre-PR baseline:
+  path: /workspace/vllm_lab/worktrees/vllm-60097-base
+  HEAD: d09ff7763747bbe7cd153edd8017479804f47be7
+  status: clean; direct parent of the tested #60097 commit
+
+The candidate worktree had no remote-only or uncommitted updates. Its tested
+commit already existed on the local fork's origin/vllm-60095-pr branch; no
+additional inner vLLM commit or push was needed for this archival change.

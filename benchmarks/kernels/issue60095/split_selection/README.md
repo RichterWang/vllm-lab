@@ -11,6 +11,7 @@ at `../end.md`.
 | `fit_split_rule.py` | Fit a small offline split rule to sweep results. |
 | `run_selector_ab.sh` | Run three alternating candidate/reference rounds. |
 | `compare_auto_ab.py` | Compare those rounds by shape and metric. |
+| `plot_three_way_ab.py` | Plot three-round baseline, PR, and candidate results from two `run_selector_ab.sh` output directories. |
 | `selector_candidate_sm86.patch` | Snapshot of the earlier 3070 Ti fixed-rule candidate; it does not include startup autotuning. |
 
 Run from the lab root:
@@ -19,6 +20,20 @@ Run from the lab root:
 benchmarks/kernels/issue60095/split_selection/run_selector_ab.sh autotune_vocab pr
 benchmarks/kernels/issue60095/split_selection/run_selector_ab.sh autotune_vocab baseline
 ```
+
+To visualize the resulting three-way comparison, pass the two timestamped
+output directories to `plot_three_way_ab.py`:
+
+```bash
+python benchmarks/kernels/issue60095/split_selection/plot_three_way_ab.py \
+  --pr-run-dir /path/to/ab_pr_autotune_vocab_TIMESTAMP \
+  --baseline-run-dir /path/to/ab_baseline_autotune_vocab_TIMESTAMP \
+  --output-dir /path/to/plots
+```
+
+The script writes PNGs for three-way device latency, speedup, split choices,
+and three-round variation at B=96/128. Speedups use each A/B run's own
+candidate measurements. It requires Matplotlib.
 
 The outer lab repository records the benchmark and analysis. The live vLLM
 implementation is in the separate Git repository at

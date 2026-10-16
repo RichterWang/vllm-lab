@@ -1,0 +1,8 @@
+baseline=/workspace/vllm_lab/worktrees/vllm-60097-base
+baseline_head=d09ff7763747bbe7cd153edd8017479804f47be7
+baseline_status=clean
+vocabs=131072,151936,262144
+K=1,6,32; dtype=bfloat16
+rounds=3; rotated K order
+benchmark_sha256=edc5a766abe829e65cf698bed5c211d007c77b5052ae7b28c29c451072688750
+NVIDIA H200, 143771 MiB, 570.195.03, GPU-75759fa6-4d13-f2e7-ee1d-9c5a5852f0f1

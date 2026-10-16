@@ -1,0 +1,18 @@
+run_id=20261016T065950Z
+candidate=/workspace/vllm_lab/worktrees/vllm-60095-pr
+candidate_head=8730e4e1d2d6975cb3c8908fa998921f2161781a
+candidate_parent=d6f0b7a4166b325b4dda6512e2e06dcb581923ba
+candidate_status=clean
+reference=/workspace/vllm_lab/worktrees/vllm-60097-pr
+reference_head=0ddd6017793c943a2091a5800f0cbac1daaa3e02
+reference_status=clean
+vocabs=131072,151936,262144
+batches=1,8,16,24,32,47,64,96,128,192,256
+dtype=bfloat16
+K=1,6,32 (num-logprobs)
+rounds=3; per-K arm order: C/R, R/C, C/R
+benchmark=/workspace/vllm_lab/benchmarks/kernels/issue60095/bench_token_logprobs.py
+benchmark_sha256=edc5a766abe829e65cf698bed5c211d007c77b5052ae7b28c29c451072688750
+torch=2.13.0+cu130 13.0
+triton=3.7.1
+NVIDIA H200, 143771 MiB, 570.195.03, GPU-75759fa6-4d13-f2e7-ee1d-9c5a5852f0f1

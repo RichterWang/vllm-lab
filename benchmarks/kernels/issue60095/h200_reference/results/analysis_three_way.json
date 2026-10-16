@@ -1,0 +1,38 @@
+{
+  "baseline_over_candidate_device": {
+    "geomean_speedup": 12.199950003099877,
+    "min_speedup": 6.407394365172447,
+    "max_speedup": 53.836858854488035,
+    "median_shapes_with_gt_5pct_slowdown": 0
+  },
+  "baseline_over_candidate_wall": {
+    "geomean_speedup": 2.190847618919198,
+    "min_speedup": 1.3069731203739774,
+    "max_speedup": 4.4382776728006155,
+    "median_shapes_with_gt_5pct_slowdown": 0
+  },
+  "baseline_over_60097_device": {
+    "geomean_speedup": 3.44617385529502,
+    "min_speedup": 1.4587809274619437,
+    "max_speedup": 27.16145881583608,
+    "median_shapes_with_gt_5pct_slowdown": 0
+  },
+  "baseline_over_60097_wall": {
+    "geomean_speedup": 1.6096793334469561,
+    "min_speedup": 1.2017378999270347,
+    "max_speedup": 2.6936791940792055,
+    "median_shapes_with_gt_5pct_slowdown": 0
+  },
+  "60097_over_candidate_device": {
+    "geomean_speedup": 3.54014350853331,
+    "min_speedup": 1.6741663932173663,
+    "max_speedup": 6.677181467106866,
+    "median_shapes_with_gt_5pct_slowdown": 0
+  },
+  "60097_over_candidate_wall": {
+    "geomean_speedup": 1.361046000527156,
+    "min_speedup": 1.0347827783305046,
+    "max_speedup": 3.0172762416025343,
+    "median_shapes_with_gt_5pct_slowdown": 0
+  }
+}

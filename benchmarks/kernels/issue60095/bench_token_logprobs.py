@@ -7,6 +7,7 @@ import argparse
 import csv
 import hashlib
 import importlib
+import importlib.util
 import inspect
 import json
 import os
@@ -53,21 +54,35 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--graph-replays", type=int, default=10)
     parser.add_argument("--initialize-autotune", action="store_true")
     parser.add_argument("--autotune-cache-dir", type=Path)
+    parser.add_argument("--logprob-source-override", type=Path)
     args = parser.parse_args()
     args.batch_sizes = args.select if args.select is not None else FULL_BATCH_SIZES
     return args
 
 
-def load_kernel_module(vllm_root: Path, binary_root: Path):
+def load_kernel_module(
+    vllm_root: Path, binary_root: Path, source_override: Path | None = None
+):
     """Load Python sources from a worktree and compiled extensions from install."""
     sys.path.insert(0, str(vllm_root.resolve()))
     vllm = importlib.import_module("vllm")
     extension_path = (binary_root.resolve() / "vllm").as_posix()
     if extension_path not in vllm.__path__:
         vllm.__path__.append(extension_path)
-    module = importlib.import_module("vllm.v1.worker.gpu.sample.logprob")
+    if source_override is None:
+        module = importlib.import_module("vllm.v1.worker.gpu.sample.logprob")
+    else:
+        spec = importlib.util.spec_from_file_location(
+            "vllm.v1.worker.gpu.sample.logprob_reference", source_override
+        )
+        if spec is None or spec.loader is None:
+            raise RuntimeError(f"Cannot load logprob source: {source_override}")
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
     module_path = Path(module.__file__).resolve()
-    if not module_path.is_relative_to(vllm_root.resolve() / "vllm"):
+    if source_override is None and not module_path.is_relative_to(
+        vllm_root.resolve() / "vllm"
+    ):
         raise RuntimeError(f"Loaded logprob module outside selected tree: {module_path}")
     return vllm, module
 
@@ -135,23 +150,26 @@ def main() -> None:
         "[3/4] Loading the selected vLLM source (platform discovery may query NVML)...",
         flush=True,
     )
-    vllm, module = load_kernel_module(vllm_root, binary_root)
+    vllm, module = load_kernel_module(
+        vllm_root, binary_root, args.logprob_source_override
+    )
     print(f"[4/4] Running benchmark for batch sizes {args.batch_sizes}...", flush=True)
 
     dtype = getattr(torch, args.dtype)
     autotune_result = None
     if args.initialize_autotune:
-        if len(args.vocab_sizes) != 1:
-            raise ValueError("Autotune benchmark expects one vocabulary size")
         from vllm.v1.worker.gpu.sample.logprob_autotune import (
             initialize_split_autotune,
         )
 
-        autotune_result = initialize_split_autotune(
-            args.vocab_sizes[0], dtype, args.num_logprobs, device,
-            args.autotune_cache_dir,
-        )
-        print("Autotune:", json.dumps(autotune_result), flush=True)
+        autotune_result = []
+        for vocab_size in args.vocab_sizes:
+            result = initialize_split_autotune(
+                vocab_size, dtype, args.num_logprobs, device,
+                args.autotune_cache_dir,
+            )
+            autotune_result.append(result)
+            print("Autotune:", json.dumps(result), flush=True)
     commit = subprocess.run(
         ["git", "-C", str(vllm_root), "rev-parse", "HEAD"],
         check=True,

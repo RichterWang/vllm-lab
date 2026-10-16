@@ -1,0 +1,26 @@
+H200 benchmark environment (captured 2026-10-16)
+
+GPU: NVIDIA H200, 132 SM, 143771 MiB
+Driver: 570.195.03
+nvidia-smi CUDA compatibility label: 12.8
+Python: 3.12.3
+PyTorch: 2.13.0+cu130
+PyTorch CUDA runtime: 13.0
+Triton: 3.7.1
+CUDA availability during the benchmark: true
+Required container compatibility library path: /usr/local/cuda-13.0/compat
+Benchmark environment: LD_LIBRARY_PATH=/usr/local/cuda-13.0/compat${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+
+Note: a later interactive SSH check without that compatibility path reported
+CUDA unavailable because the host driver exposes CUDA 12.8. Repeating the check
+with the compatibility path restored made torch.cuda.is_available() true and
+identified the H200 with 132 SM. The benchmark runners set this path explicitly.
+
+Benchmark extension/binary root: /workspace/vllm_lab/src/vllm
+Binary root commit: fbe8a157fbdd4b2f813ae6395397232de97d5c5d
+Binary root branch: learning/cu130-fbe8a157 (clean; tracks origin)
+Benchmark source SHA256: edc5a766abe829e65cf698bed5c211d007c77b5052ae7b28c29c451072688750
+
+Run-time telemetry is in results/gpu_telemetry.csv and
+results/gpu_telemetry_baseline.csv. The baseline run observed 1980 MHz SM and
+3201 MHz memory clocks, 20–30°C GPU temperature, and 0–2% utilization.

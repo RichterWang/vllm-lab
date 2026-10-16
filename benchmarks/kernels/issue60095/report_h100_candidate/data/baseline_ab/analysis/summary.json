@@ -1,0 +1,27 @@
+{
+  "reference_runs": [
+    "/workspace/vllm_lab_h100/results/kernel/issue60095/split-selection/ab_baseline_autotune_vocab_20261015T132539_385434453/r1_reference",
+    "/workspace/vllm_lab_h100/results/kernel/issue60095/split-selection/ab_baseline_autotune_vocab_20261015T132539_385434453/r2_reference",
+    "/workspace/vllm_lab_h100/results/kernel/issue60095/split-selection/ab_baseline_autotune_vocab_20261015T132539_385434453/r3_reference"
+  ],
+  "candidate_runs": [
+    "/workspace/vllm_lab_h100/results/kernel/issue60095/split-selection/ab_baseline_autotune_vocab_20261015T132539_385434453/r1_candidate",
+    "/workspace/vllm_lab_h100/results/kernel/issue60095/split-selection/ab_baseline_autotune_vocab_20261015T132539_385434453/r2_candidate",
+    "/workspace/vllm_lab_h100/results/kernel/issue60095/split-selection/ab_baseline_autotune_vocab_20261015T132539_385434453/r3_candidate"
+  ],
+  "reference_source_sha256": "ac58bfedaa325ae29e7b652063455239c7354a2af4751396930d5670f890ce2d",
+  "candidate_source_sha256": "6e185dc82516716deb04653230e180c17644f67a0e6011d0a037f84092bea7a0",
+  "reference_commit": "d09ff7763747bbe7cd153edd8017479804f47be7",
+  "candidate_commit": "c00ded17476992df717086687e25033342807e8e",
+  "reference_implementation": "base",
+  "gpu": "NVIDIA H100 80GB HBM3",
+  "sm_count": 132,
+  "shapes": 9,
+  "rounds": 3,
+  "geomean_speedup": 8.105393374875531,
+  "worst_speedup": 4.475216607817494,
+  "regressions_over_5pct": 0,
+  "wall_geomean_speedup": 2.5896591647814207,
+  "wall_worst_speedup": 2.5098171412892225,
+  "wall_regressions_over_5pct": 0
+}
