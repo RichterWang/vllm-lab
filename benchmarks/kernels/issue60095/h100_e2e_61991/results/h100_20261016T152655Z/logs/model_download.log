@@ -1,0 +1,12 @@
+Downloading hf-xet (4.0MiB)
+ Downloading hf-xet
+Installed 15 packages in 430ms
+[90mHint: The `hf-cli` skill is not installed. Run `hf skills add -g` to teach your AI agents how to use the `hf` CLI.[0m
+Fetching 10 files:   0%|          | 0/10 [00:00<?, ?it/s]Still waiting to acquire lock on /workspace/vllm_lab/models/Qwen3-0.6B-c1899de289a04d12100db370d81485cdf75e47ca/.cache/huggingface/.gitignore.lock (elapsed: 0.1 seconds)
+Still waiting to acquire lock on /workspace/vllm_lab/models/Qwen3-0.6B-c1899de289a04d12100db370d81485cdf75e47ca/.cache/huggingface/.gitignore.lock (elapsed: 0.1 seconds)
+Still waiting to acquire lock on /workspace/vllm_lab/models/Qwen3-0.6B-c1899de289a04d12100db370d81485cdf75e47ca/.cache/huggingface/.gitignore.lock (elapsed: 0.1 seconds)
+Still waiting to acquire lock on /workspace/vllm_lab/models/Qwen3-0.6B-c1899de289a04d12100db370d81485cdf75e47ca/.cache/huggingface/.gitignore.lock (elapsed: 0.1 seconds)
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Fetching 10 files:  10%|█         | 1/10 [00:00<00:05,  1.75it/s]Fetching 10 files:  30%|███       | 3/10 [00:00<00:01,  4.83it/s]Fetching 10 files:  60%|██████    | 6/10 [00:00<00:00,  8.94it/s]Fetching 10 files:  80%|████████  | 8/10 [00:01<00:00, 10.22it/s]Fetching 10 files: 100%|██████████| 10/10 [00:06<00:00,  1.01s/it]Fetching 10 files: 100%|██████████| 10/10 [00:06<00:00,  1.54it/s]
+[32m✓ Downloaded[0m
+  path: /workspace/vllm_lab/models/Qwen3-0.6B-c1899de289a04d12100db370d81485cdf75e47ca

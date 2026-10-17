@@ -1,0 +1,9 @@
+Using Python 3.12.3 environment at: /tmp/issue61991-run/env-main
+Resolved 1 package in 48ms
+Downloading nvidia-cuda-nvcc (35.7MiB)
+ Downloading nvidia-cuda-nvcc
+Prepared 1 package in 571ms
+Uninstalled 1 package in 17ms
+Installed 1 package in 4ms
+ - nvidia-cuda-nvcc==13.4.92
+ + nvidia-cuda-nvcc==13.0.88

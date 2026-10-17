@@ -1,0 +1,19 @@
+Using Python 3.12.3 environment at: /workspace/vllm_lab/envs/issue61991-parent
+Resolved 11 packages in 134ms
+Downloading setuptools (1.0MiB)
+Downloading cmake (28.8MiB)
+ Downloading setuptools
+ Downloading cmake
+Prepared 9 packages in 21.52s
+Uninstalled 1 package in 670ms
+Installed 9 packages in 5.63s
+ + cmake==4.4.4
+ + ninja==1.13.2
+ + packaging==26.3
+ + semantic-version==2.10.0
+ - setuptools==84.0.0
+ + setuptools==80.10.2
+ + setuptools-rust==1.13.0
+ + setuptools-scm==10.3.4
+ + vcs-versioning==2.6.0
+ + wheel==0.48.0

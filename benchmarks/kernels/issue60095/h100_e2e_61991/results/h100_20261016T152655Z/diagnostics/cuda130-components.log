@@ -1,0 +1,20 @@
+Using Python 3.12.3 environment at: /tmp/issue61991-run/env-main
+Resolved 5 packages in 44ms
+Downloading nvidia-nvjitlink (38.8MiB)
+Downloading nvidia-cuda-cccl (3.0MiB)
+Downloading nvidia-nvvm (58.7MiB)
+ Downloading nvidia-nvjitlink
+ Downloading nvidia-nvvm
+ Downloading nvidia-cuda-cccl
+Prepared 5 packages in 2.20s
+Uninstalled 5 packages in 156ms
+Installed 5 packages in 52ms
+ - nvidia-cuda-cccl==13.3.4.3.1
+ + nvidia-cuda-cccl==13.0.85
+ - nvidia-cuda-crt==13.4.92
+ + nvidia-cuda-crt==13.0.88
+ ~ nvidia-cuda-nvcc==13.0.88
+ - nvidia-nvjitlink==13.4.92
+ + nvidia-nvjitlink==13.0.88
+ - nvidia-nvvm==13.4.92
+ + nvidia-nvvm==13.0.88

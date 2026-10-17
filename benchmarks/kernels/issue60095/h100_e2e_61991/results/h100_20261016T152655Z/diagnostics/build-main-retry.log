@@ -1,0 +1,59 @@
+Using Python 3.12.3 environment at: /tmp/issue61991-run/env-main
+  × Failed to build `vllm @ file:///tmp/issue61991-run/src-main`
+  ├─▶ The build backend returned an error
+  ╰─▶ Call to `setuptools.build_meta.prepare_metadata_for_build_editable`
+      failed (exit status: 1)
+
+      [stderr]
+      Traceback (most recent call last):
+        File "<string>", line 14, in <module>
+        File
+      "/tmp/issue61991-run/env-main/lib/python3.12/site-packages/setuptools/build_meta.py",
+      line 484, in prepare_metadata_for_build_editable
+          return self.prepare_metadata_for_build_wheel(
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        File
+      "/tmp/issue61991-run/env-main/lib/python3.12/site-packages/setuptools/build_meta.py",
+      line 378, in prepare_metadata_for_build_wheel
+          self.run_setup()
+        File
+      "/tmp/issue61991-run/env-main/lib/python3.12/site-packages/setuptools/build_meta.py",
+      line 317, in run_setup
+          exec(code, locals())
+        File "<string>", line 1674, in <module>
+        File "<string>", line 1358, in get_vllm_version
+        File
+      "/tmp/issue61991-run/env-main/lib/python3.12/site-packages/setuptools_scm/_get_version.py",
+      line 59, in get_version
+          return _get_version_public(
+                 ^^^^^^^^^^^^^^^^^^^^
+        File
+      "/tmp/issue61991-run/env-main/lib/python3.12/site-packages/vcs_versioning/_get_version_impl.py",
+      line 382, in get_version
+          _version_missing(config)
+        File
+      "/tmp/issue61991-run/env-main/lib/python3.12/site-packages/vcs_versioning/_get_version_impl.py",
+      line 306, in _version_missing
+          raise LookupError(error_msg)
+      LookupError: setuptools-scm was unable to detect version for
+      /tmp/issue61991-run/src-main.
+
+      Make sure you're either building from a fully intact git repository
+      or PyPI tarballs. Most other sources (such as GitHub's tarballs, a git
+      checkout without the .git folder) don't contain the necessary metadata
+      and will not work.
+
+      For example, if you're using pip, instead of
+      https://github.com/user/proj/archive/master.zip use
+      git+https://github.com/user/proj.git#egg=proj
+
+      Alternatively, set the version in the environment with
+      SETUPTOOLS_SCM_PRETEND_VERSION or VCS_VERSIONING_PRETEND_VERSION, as
+      described in https://setuptools-scm.readthedocs.io/en/latest/config/
+
+      No distribution name is known here, so the per-distribution
+      SETUPTOOLS_SCM_PRETEND_VERSION_FOR_<DIST> form cannot match; pass a dist
+      name to use it.
+
+      hint: This usually indicates a problem with the package or the build
+      environment.

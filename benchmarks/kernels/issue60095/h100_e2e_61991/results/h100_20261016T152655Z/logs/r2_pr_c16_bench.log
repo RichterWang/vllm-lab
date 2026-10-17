@@ -1,0 +1,72 @@
+W1016 20:47:00.873000 52519 env-parent/lib/python3.12/site-packages/torch/_opaque_base.py:6] torch._opaque_base is deprecated, use torch._custom_class_base instead
+W1016 20:47:00.874000 52519 env-parent/lib/python3.12/site-packages/torch/_library/opaque_object.py:288] register_opaque_type is deprecated, use register_custom_class instead
+W1016 20:47:00.875000 52519 env-parent/lib/python3.12/site-packages/torch/_library/opaque_object.py:211] typ='value' is deprecated, use typ='constant' instead
+Namespace(trust_remote_code=False, seed=618, num_prompts=200, dataset_name='random', no_stream=False, dataset_path=None, no_oversample=False, skip_chat_template=False, enable_multimodal_chat=False, disable_shuffle=False, custom_output_len=256, custom_ensure_client_side_data=False, spec_bench_output_len=256, spec_bench_category=None, sharegpt_output_len=None, timed_trace_chunk_hash_size=16, timed_trace_sec_multiplier=1, timed_trace_label_timestamp='timestamp', timed_trace_label_input_length='input_length', timed_trace_label_output_length='output_length', timed_trace_label_hash_ids='hash_ids', blazedit_min_distance=0.0, blazedit_max_distance=1.0, asr_max_audio_len_sec=inf, asr_min_audio_len_sec=0.0, random_input_len=128, random_output_len=128, random_range_ratio='0.0', random_prefix_len=0, random_batch_size=1, no_reranker=False, random_mm_base_items_per_request=1, random_mm_num_mm_items_range_ratio=0.0, random_mm_limit_mm_per_prompt={'image': 255, 'video': 1}, random_mm_bucket_config={(256, 256, 1): 0.5, (720, 1280, 1): 0.5, (720, 1280, 16): 0.0}, hf_subset=None, hf_split=None, hf_name=None, hf_output_len=None, bfcl_categories=None, prefix_repetition_prefix_len=256, prefix_repetition_suffix_len=256, prefix_repetition_num_prefixes=10, prefix_repetition_output_len=128, speed_bench_dataset_subset='qualitative', speed_bench_output_len=4096, speed_bench_category=None, label=None, backend='openai', base_url=None, host='127.0.0.1', port=8000, endpoint='/v1/completions', header=None, max_concurrency=16, model='qwen3-0.6b', input_len=None, output_len=None, tokenizer='/tmp/issue61991-run/model', tokenizer_mode='auto', use_beam_search=False, logprobs=5, request_rate=inf, burstiness=1.0, probe_request_rate=0.0, disable_tqdm=True, num_warmups=4, profile=False, save_result=True, save_detailed=True, append_result=False, metadata=['arm=pr', 'round=2', 'concurrency=16', 'commit=b2625fd3fd7ea896940c075b8cc132d9e6bbaee3'], result_dir='/workspace/vllm_lab/results/serve/issue61991/h100_20261016T152655Z/raw/pr', result_filename='r2-c16.json', ignore_eos=True, self_timed=None, percentile_metrics='ttft,tpot,itl,e2el', metric_percentiles='50,95,99', goodput=None, request_id_prefix='bench-2021425b-', top_p=None, top_k=None, min_p=None, temperature=0.0, frequency_penalty=None, presence_penalty=None, repetition_penalty=None, served_model_name=None, lora_modules=None, lora_assignment='random', ramp_up_strategy=None, ramp_up_start_rps=None, ramp_up_end_rps=None, ready_check_timeout_sec=0, chat_template_kwargs=None, extra_body=None, skip_tokenizer_init=False, insecure=False, plot_timeline=False, timeline_itl_thresholds='25,50', plot_dataset_stats=False)
+Starting initial single prompt test run...
+Skipping endpoint ready check.
+Warming up with 4 requests...
+Warmup run completed.
+Starting main benchmark run...
+Traffic request rate: inf
+Burstiness factor: 1.0 (Poisson process)
+Maximum request concurrency: 16
+tip: install termplotlib and gnuplot to plot the metrics
+============ Serving Benchmark Result ============
+Successful requests:                     200       
+Failed requests:                         0         
+Maximum request concurrency:             16        
+Benchmark duration (s):                  24.45     
+Total input tokens:                      25600     
+Total generated tokens:                  25600     
+Request throughput (req/s):              8.18      
+Output token throughput (tok/s):         1047.09   
+Peak output token throughput (tok/s):    1520.00   
+Peak concurrent requests:                32.00     
+Total token throughput (tok/s):          2094.19   
+---------------Time to First Token----------------
+Mean TTFT (ms):                          86.08     
+Median TTFT (ms):                        68.38     
+P50 TTFT (ms):                           68.38     
+P95 TTFT (ms):                           176.41    
+P99 TTFT (ms):                           190.56    
+-----Time per Output Token (excl. 1st token)------
+Mean TPOT (ms):                          14.27     
+Median TPOT (ms):                        12.15     
+P50 TPOT (ms):                           12.15     
+P95 TPOT (ms):                           20.67     
+P99 TPOT (ms):                           20.73     
+---------------Inter-token Latency----------------
+Mean ITL (ms):                           14.27     
+Median ITL (ms):                         11.48     
+P50 ITL (ms):                            11.48     
+P95 ITL (ms):                            21.30     
+P99 ITL (ms):                            23.69     
+----------------End-to-end Latency----------------
+Mean E2EL (ms):                          1897.73   
+Median E2EL (ms):                        1610.16   
+P50 E2EL (ms):                           1610.16   
+P95 E2EL (ms):                           2752.89   
+P99 E2EL (ms):                           2762.63   
+==================================================
+{
+  "completed": 200,
+  "failed": 0,
+  "request_throughput": 8.180424609149195,
+  "output_throughput": 1047.094349971097,
+  "mean_ttft_ms": 86.07670588651672,
+  "p50_ttft_ms": 68.3798820246011,
+  "p95_ttft_ms": 176.40972470398992,
+  "p99_ttft_ms": 190.56076868902892,
+  "mean_tpot_ms": 14.2650187632443,
+  "p50_tpot_ms": 12.147452060763879,
+  "p95_tpot_ms": 20.674633468486604,
+  "p99_tpot_ms": 20.732541541554266,
+  "mean_itl_ms": 14.270075089063258,
+  "p50_itl_ms": 11.476875748485327,
+  "p95_itl_ms": 21.297435741871595,
+  "p99_itl_ms": 23.689261078834527,
+  "mean_e2el_ms": 1897.7340888185427,
+  "p50_e2el_ms": 1610.1645643357188,
+  "p95_e2el_ms": 2752.8944856487215,
+  "p99_e2el_ms": 2762.625385890715
+}

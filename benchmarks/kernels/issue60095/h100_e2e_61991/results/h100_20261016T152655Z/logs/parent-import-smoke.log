@@ -1,0 +1,7 @@
+W1016 15:42:14.588000 2499 torch/_opaque_base.py:6] torch._opaque_base is deprecated, use torch._custom_class_base instead
+W1016 15:42:14.595000 2499 torch/_library/opaque_object.py:288] register_opaque_type is deprecated, use register_custom_class instead
+W1016 15:42:14.608000 2499 torch/_library/opaque_object.py:211] typ='value' is deprecated, use typ='constant' instead
+python 3.12.3 (main, Aug 14 2025, 17:47:21) [GCC 13.3.0]
+vllm 0.32.0rc1.dev284+gfa75d3456 /workspace/vllm_lab/envs/issue61991-parent/lib/python3.12/site-packages/vllm/__init__.py
+torch 2.14.0+cu130 13.0 True NVIDIA H100 80GB HBM3
+triton 3.8.0

@@ -1,0 +1,9 @@
+Using Python 3.12.3 environment at: /tmp/issue61991-run/env-main
+Resolved 1 package in 3.39s
+   Building vllm @ file:///tmp/issue61991-run/src-main
+      Built vllm @ file:///tmp/issue61991-run/src-main
+Prepared 1 package in 67m 11s
+Uninstalled 1 package in 223ms
+Installed 1 package in 8ms
+ - vllm==0.32.0rc1.dev284+gfa75d3456 (from https://wheels.vllm.ai/fa75d3456d60a5ffe923818c4b495295675b38e1/vllm-0.32.0rc1.dev284%2Bgfa75d3456-cp38-abi3-manylinux_2_28_x86_64.whl)
+ + vllm==0.32.0.dev0+gcffc0cfa31 (from file:///tmp/issue61991-run/src-main)

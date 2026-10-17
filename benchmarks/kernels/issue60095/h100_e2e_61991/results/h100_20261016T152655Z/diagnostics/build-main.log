@@ -1,0 +1,198 @@
+Using Python 3.12.3 environment at: /tmp/issue61991-run/env-main
+Resolved 1 package in 3.98s
+   Building vllm @ file:///tmp/issue61991-run/src-main
+  × Failed to build `vllm @ file:///tmp/issue61991-run/src-main`
+  ├─▶ The build backend returned an error
+  ╰─▶ Call to `setuptools.build_meta.build_editable` failed (exit status: 1)
+
+      [stdout]
+      Overriding VLLM version with 0.32.0.dev0+gcffc0cfa31 from
+      VLLM_VERSION_OVERRIDE
+      running editable_wheel
+      creating /root/.cache/uv/builds-v0/.tmpyuQPTu/.tmp-milwu6vm/vllm.egg-info
+      writing
+      /root/.cache/uv/builds-v0/.tmpyuQPTu/.tmp-milwu6vm/vllm.egg-info/PKG-INFO
+      writing dependency_links to
+      /root/.cache/uv/builds-v0/.tmpyuQPTu/.tmp-milwu6vm/vllm.egg-info/dependency_links.txt
+      writing entry points to
+      /root/.cache/uv/builds-v0/.tmpyuQPTu/.tmp-milwu6vm/vllm.egg-info/entry_points.txt
+      writing requirements to
+      /root/.cache/uv/builds-v0/.tmpyuQPTu/.tmp-milwu6vm/vllm.egg-info/requires.txt
+      writing top-level names to
+      /root/.cache/uv/builds-v0/.tmpyuQPTu/.tmp-milwu6vm/vllm.egg-info/top_level.txt
+      writing manifest file
+      '/root/.cache/uv/builds-v0/.tmpyuQPTu/.tmp-milwu6vm/vllm.egg-info/SOURCES.txt'
+      reading manifest file
+      '/root/.cache/uv/builds-v0/.tmpyuQPTu/.tmp-milwu6vm/vllm.egg-info/SOURCES.txt'
+      reading manifest template 'MANIFEST.in'
+      adding license file 'LICENSE'
+      writing manifest file
+      '/root/.cache/uv/builds-v0/.tmpyuQPTu/.tmp-milwu6vm/vllm.egg-info/SOURCES.txt'
+      creating
+      '/root/.cache/uv/builds-v0/.tmpyuQPTu/.tmp-milwu6vm/vllm-0.32.0.dev0+gcffc0cfa31.dist-info'
+      creating
+      /root/.cache/uv/builds-v0/.tmpyuQPTu/.tmp-milwu6vm/vllm-0.32.0.dev0+gcffc0cfa31.dist-info/WHEEL
+      running build_py
+      running build_ext
+      Using MAX_JOBS=8 as the number of jobs.
+      Using NVCC_THREADS=2 as the number of nvcc threads.
+      -- The CXX compiler identification is GNU 13.3.0
+      -- Detecting CXX compiler ABI info
+      -- Detecting CXX compiler ABI info - done
+      -- Check for working CXX compiler: /usr/bin/c++ - skipped
+      -- Detecting CXX compile features
+      -- Detecting CXX compile features - done
+      -- Build type: RelWithDebInfo
+      -- Target device: cuda
+      -- Found Python: /tmp/issue61991-run/env-main/bin/python (found
+      version "3.12.3") found components: Interpreter Development.Module
+      Development.SABIModule
+      -- Found python matching: /tmp/issue61991-run/env-main/bin/python.
+      -- Could NOT find CUDA (missing: CUDA_CUDART_LIBRARY) (found version
+      "13.4")
+      -- Configuring incomplete, errors occurred!
+
+      [stderr]
+      /tmp/issue61991-run/env-main/lib/python3.12/site-packages/setuptools_scm/_integration/version_inference.py:236:
+      UserWarning: version of None already set
+        warnings.warn(f"version of {self.dist_name} already set")
+      CMake Warning at
+      /tmp/issue61991-run/env-main/lib/python3.12/site-packages/torch/share/cmake/Caffe2/public/cuda.cmake:40
+      (message):
+        PyTorch: CUDA cannot be found.  Depending on whether you are building
+        PyTorch or a PyTorch dependent library, the next warning / error will
+      give
+        you more info.
+      Call Stack (most recent call first):
+        /tmp/issue61991-run/env-main/lib/python3.12/site-packages/torch/share/cmake/Caffe2/Caffe2Config.cmake:84
+      (include)
+        /workspace/vllm_lab/envs/issue61991-parent/lib/python3.12/site-packages/cmake/data/share/cmake-4.4/Modules/CMakeFindDependencyMacro.cmake:93
+      (find_package)
+        /workspace/vllm_lab/envs/issue61991-parent/lib/python3.12/site-packages/cmake/data/share/cmake-4.4/Modules/CMakeFindDependencyMacro.cmake:125
+      (__find_dependency_common)
+        /tmp/issue61991-run/env-main/lib/python3.12/site-packages/torch/share/cmake/Torch/TorchConfig.cmake:62
+      (find_dependency)
+        CMakeLists.txt:112 (find_package)
+
+
+      CMake Error at
+      /tmp/issue61991-run/env-main/lib/python3.12/site-packages/torch/share/cmake/Caffe2/Caffe2Config.cmake:88
+      (message):
+        Your installed Caffe2 version uses CUDA but I cannot find the CUDA
+        libraries.  Please set the proper CUDA prefixes and / or install CUDA.
+      Call Stack (most recent call first):
+        /workspace/vllm_lab/envs/issue61991-parent/lib/python3.12/site-packages/cmake/data/share/cmake-4.4/Modules/CMakeFindDependencyMacro.cmake:93
+      (find_package)
+        /workspace/vllm_lab/envs/issue61991-parent/lib/python3.12/site-packages/cmake/data/share/cmake-4.4/Modules/CMakeFindDependencyMacro.cmake:125
+      (__find_dependency_common)
+        /tmp/issue61991-run/env-main/lib/python3.12/site-packages/torch/share/cmake/Torch/TorchConfig.cmake:62
+      (find_dependency)
+        CMakeLists.txt:112 (find_package)
+
+
+      Traceback (most recent call last):
+        File "<string>", line 11, in <module>
+        File
+      "/tmp/issue61991-run/env-main/lib/python3.12/site-packages/setuptools/build_meta.py",
+      line 472, in build_editable
+          return self._build_with_temp_dir(
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+        File
+      "/tmp/issue61991-run/env-main/lib/python3.12/site-packages/setuptools/build_meta.py",
+      line 408, in _build_with_temp_dir
+          self.run_setup()
+        File
+      "/tmp/issue61991-run/env-main/lib/python3.12/site-packages/setuptools/build_meta.py",
+      line 317, in run_setup
+          exec(code, locals())
+        File "<string>", line 1683, in <module>
+        File
+      "/tmp/issue61991-run/env-main/lib/python3.12/site-packages/setuptools/__init__.py",
+      line 117, in setup
+          return distutils.core.setup(**attrs)  # type: ignore[return-value]
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        File
+      "/tmp/issue61991-run/env-main/lib/python3.12/site-packages/setuptools/_distutils/core.py",
+      line 186, in setup
+          return run_commands(dist)
+                 ^^^^^^^^^^^^^^^^^^
+        File
+      "/tmp/issue61991-run/env-main/lib/python3.12/site-packages/setuptools/_distutils/core.py",
+      line 202, in run_commands
+          dist.run_commands()
+        File
+      "/tmp/issue61991-run/env-main/lib/python3.12/site-packages/setuptools/_distutils/dist.py",
+      line 1002, in run_commands
+          self.run_command(cmd)
+        File
+      "/tmp/issue61991-run/env-main/lib/python3.12/site-packages/setuptools/dist.py",
+      line 1107, in run_command
+          super().run_command(command)
+        File
+      "/tmp/issue61991-run/env-main/lib/python3.12/site-packages/setuptools/_distutils/dist.py",
+      line 1021, in run_command
+          cmd_obj.run()
+        File
+      "/tmp/issue61991-run/env-main/lib/python3.12/site-packages/setuptools/command/editable_wheel.py",
+      line 140, in run
+          self._create_wheel_file(bdist_wheel)
+        File
+      "/tmp/issue61991-run/env-main/lib/python3.12/site-packages/setuptools/command/editable_wheel.py",
+      line 350, in _create_wheel_file
+          files, mapping = self._run_build_commands(dist_name, unpacked, lib,
+      tmp)
+      
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        File
+      "/tmp/issue61991-run/env-main/lib/python3.12/site-packages/setuptools/command/editable_wheel.py",
+      line 273, in _run_build_commands
+          self._run_build_subcommands()
+        File
+      "/tmp/issue61991-run/env-main/lib/python3.12/site-packages/setuptools/command/editable_wheel.py",
+      line 300, in _run_build_subcommands
+          self.run_command(name)
+        File
+      "/tmp/issue61991-run/env-main/lib/python3.12/site-packages/setuptools/_distutils/cmd.py",
+      line 357, in run_command
+          self.distribution.run_command(command)
+        File
+      "/tmp/issue61991-run/env-main/lib/python3.12/site-packages/setuptools/dist.py",
+      line 1107, in run_command
+          super().run_command(command)
+        File
+      "/tmp/issue61991-run/env-main/lib/python3.12/site-packages/setuptools/_distutils/dist.py",
+      line 1021, in run_command
+          cmd_obj.run()
+        File
+      "/tmp/issue61991-run/env-main/lib/python3.12/site-packages/setuptools_rust/setuptools_ext.py",
+      line 177, in run
+          super().run()
+        File "<string>", line 403, in run
+        File
+      "/tmp/issue61991-run/env-main/lib/python3.12/site-packages/setuptools/command/build_ext.py",
+      line 97, in run
+          _build_ext.run(self)
+        File
+      "/tmp/issue61991-run/env-main/lib/python3.12/site-packages/setuptools/_distutils/command/build_ext.py",
+      line 368, in run
+          self.build_extensions()
+        File "<string>", line 360, in build_extensions
+        File "<string>", line 337, in configure
+        File "/usr/lib/python3.12/subprocess.py", line 413, in check_call
+          raise CalledProcessError(retcode, cmd)
+      subprocess.CalledProcessError: Command '['cmake',
+      '/tmp/issue61991-run/src-main', '-G', 'Ninja',
+      '-DCMAKE_BUILD_TYPE=RelWithDebInfo', '-DVLLM_TARGET_DEVICE=cuda',
+      '-DVLLM_PYTHON_EXECUTABLE=/tmp/issue61991-run/env-main/bin/python',
+      '-DVLLM_PYTHON_PATH=/tmp/issue61991-run/env-main/lib/python3.12/site-packages/nvidia_cutlass_dsl/dsl_packages:/tmp/issue61991-run/env-main/lib/python3.12/site-packages/nvidia_cutlass_dsl/dsl_packages:/usr/lib/python312.zip:/usr/lib/python3.12:/usr/lib/python3.12/lib-dynload:/tmp/issue61991-run/env-main/lib/python3.12/site-packages:/tmp/issue61991-run/env-main/lib/python3.12/site-packages/setuptools/_vendor',
+      '-DFETCHCONTENT_BASE_DIR=/tmp/issue61991-run/src-main/.deps',
+      '-DNVCC_THREADS=2', '-DCMAKE_JOB_POOL_COMPILE:STRING=compile',
+      '-DCMAKE_JOB_POOLS:STRING=compile=4',
+      '-DCMAKE_CUDA_COMPILER=/tmp/issue61991-run/env-main/lib/python3.12/site-packages/nvidia/cu13/bin/nvcc']'
+      returned non-zero exit status 1.
+      An error occurred when building editable wheel for vllm.
+      See debugging tips in:
+      https://setuptools.pypa.io/en/latest/userguide/development_mode.html#debugging-tips
+
+      hint: This usually indicates a problem with the package or the build
+      environment.

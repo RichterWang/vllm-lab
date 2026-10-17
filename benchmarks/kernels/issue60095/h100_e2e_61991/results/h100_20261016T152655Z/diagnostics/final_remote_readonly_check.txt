@@ -1,0 +1,16 @@
+checked_utc=2026-10-16T21:24:59Z
+NVIDIA H100 80GB HBM3, 81559 MiB, 0 MiB, 27, 0 %, 345 MHz
+env=/tmp/issue61991-run/env-parent
+W1016 21:25:01.825000 61301 torch/_library/opaque_object.py:211] typ='value' is deprecated, use typ='constant' instead
+vllm=0.32.0rc1.dev284+gfa75d3456
+torch=2.14.0+cu130 cuda=13.0 available=True
+triton=3.8.0
+env=/tmp/issue61991-run/env-main
+W1016 21:25:08.053000 61368 torch/_library/opaque_object.py:211] typ='value' is deprecated, use typ='constant' instead
+vllm=0.32.0.dev0+gcffc0cfa31
+torch=2.14.0+cu130 cuda=13.0 available=True
+triton=3.8.0
+parent_head=fa75d3456d60a5ffe923818c4b495295675b38e1
+pr_head=b2625fd3fd7ea896940c075b8cc132d9e6bbaee3
+main_head=cffc0cfa311f4997be58cfe8f5f6473ab4898269
+status_rows=27

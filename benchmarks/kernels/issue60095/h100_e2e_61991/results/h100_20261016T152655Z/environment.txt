@@ -1,0 +1,75 @@
+timestamp_utc=2026-10-16T15:27:02+00:00
+host=383627c28bf0
+Fri Oct 16 15:27:02 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 595.91.07              Driver Version: 595.91.07      CUDA Version: 13.2     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA H100 80GB HBM3          On  |   00000000:BA:00.0 Off |                    0 |
+| N/A   25C    P0             70W /  700W |       0MiB /  81559MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+--- toolchain ---
+Python 3.12.3
+torch= 2.8.0+cu128 torch_cuda= 12.8 triton= 3.4.0 cuda_available= True
+nvcc: NVIDIA (R) Cuda compiler driver
+Copyright (c) 2005-2025 NVIDIA Corporation
+Built on Fri_Feb_21_20:23:50_PST_2025
+Cuda compilation tools, release 12.8, V12.8.93
+Build cuda_12.8.r12.8/compiler.35583870_0
+--- commits ---
+parent fa75d3456d60a5ffe923818c4b495295675b38e1
+## HEAD (no branch)
+pr b2625fd3fd7ea896940c075b8cc132d9e6bbaee3
+## HEAD (no branch)
+main 1a5b187066c918b2e23184560d703174dd542828
+## HEAD (no branch)
+--- current main/pr relationship ---
+ .buildkite/test_areas/misc.yaml                    |   1 +
+ .github/CODEOWNERS                                 |   3 +-
+ csrc/activation_kernels.cu                         |  27 ---
+ csrc/ops.h                                         |   4 -
+ csrc/torch_bindings.cpp                            |   4 -
+ docs/models/pooling_models/scoring.md              |   2 +
+ docs/serving/online_serving/derenderer.md          |   4 +-
+ .../mooncake_connector/mooncake_connector_proxy.py |   5 +-
+ .../pooling/scoring/test_io_processor_unit.py      |  47 +++++-
+ .../scale_out/derender/test_derender.py            | 112 +++++++++++--
+ .../scale_out/derender/test_derender_parity.py     | 183 ++++++++++++++++++++-
+ .../scale_out/derender/test_derender_stream.py     | 153 +++++++++++++++++
+ tests/entrypoints/scale_out/derender/utils.py      |  11 ++
+ tests/kernels/core/test_activation.py              |  40 -----
+ tests/kernels/mhc/test_mhc_kernels.py              |  14 +-
+ .../test_jit_warmup_triton_launcher.py             |  28 ++--
+ tests/v1/kv_connector/unit/test_mooncake_proxy.py  |  47 ++++++
+ tests/v1/kv_connector/unit/test_multi_connector.py |  17 ++
+ vllm/_aiter_ops.py                                 |  34 +---
+ .../kv_transfer/kv_connector/v1/multi_connector.py |   8 +-
+ vllm/entrypoints/pooling/offline.py                |   4 +-
+ vllm/entrypoints/pooling/scoring/io_processor.py   |   6 +-
+ vllm/model_executor/kernels/linear/__init__.py     |   5 +
+ .../model_executor/kernels/linear/mxfp4/pytorch.py |  71 ++++++++
+ vllm/model_executor/kernels/mhc/tilelang.py        |  13 --
+ .../layers/fused_moe/expert_map_manager.py         |   7 -
+ .../layers/quantization/utils/int8_utils.py        |  29 ----
+ vllm/model_executor/warmup/jit_warmup.py           |  39 ++++-
+ .../warmup/jit_warmup_triton_helper.py             |  62 ++++---
+ vllm/models/deepseek_v32/amd/model.py              |  15 +-
+ vllm/renderers/online_derenderer.py                |  60 +++++--
+ vllm/v1/sample/ops/topk_topp_sampler.py            |  10 --
+ 32 files changed, 808 insertions(+), 257 deletions(-)
+--- storage ---
+Filesystem                   Size  Used Avail Use% Mounted on
+overlay                       50G   16M   50G   1% /
+mfs#ap-jp-1.runpod.net:9421  559T  355T  204T  64% /workspace
