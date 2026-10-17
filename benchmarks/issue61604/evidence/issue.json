@@ -1,0 +1,82 @@
+{
+  "url": "https://api.github.com/repos/vllm-project/vllm/issues/61604",
+  "repository_url": "https://api.github.com/repos/vllm-project/vllm",
+  "labels_url": "https://api.github.com/repos/vllm-project/vllm/issues/61604/labels{/name}",
+  "comments_url": "https://api.github.com/repos/vllm-project/vllm/issues/61604/comments",
+  "events_url": "https://api.github.com/repos/vllm-project/vllm/issues/61604/events",
+  "html_url": "https://github.com/vllm-project/vllm/issues/61604",
+  "id": 5845726311,
+  "node_id": "I_kwDOI7xefs8AAAABXG60Zw",
+  "number": 61604,
+  "title": "[Performance]: Waiting requests re-walk their whole prefix-cache hit on every scheduling step",
+  "user": {
+    "login": "apex-mochen",
+    "id": 265981728,
+    "node_id": "U_kgDOD9qPIA",
+    "avatar_url": "https://avatars.githubusercontent.com/u/265981728?v=4",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/apex-mochen",
+    "html_url": "https://github.com/apex-mochen",
+    "followers_url": "https://api.github.com/users/apex-mochen/followers",
+    "following_url": "https://api.github.com/users/apex-mochen/following{/other_user}",
+    "gists_url": "https://api.github.com/users/apex-mochen/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/apex-mochen/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/apex-mochen/subscriptions",
+    "organizations_url": "https://api.github.com/users/apex-mochen/orgs",
+    "repos_url": "https://api.github.com/users/apex-mochen/repos",
+    "events_url": "https://api.github.com/users/apex-mochen/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/apex-mochen/received_events",
+    "type": "User",
+    "user_view_type": "public",
+    "site_admin": false
+  },
+  "labels": [
+
+  ],
+  "state": "open",
+  "locked": false,
+  "assignees": [
+
+  ],
+  "milestone": null,
+  "comments": 2,
+  "created_at": "2026-10-14T09:56:49Z",
+  "updated_at": "2026-10-15T07:22:34Z",
+  "closed_at": null,
+  "assignee": null,
+  "author_association": "CONTRIBUTOR",
+  "issue_field_values": [
+
+  ],
+  "type": null,
+  "active_lock_reason": null,
+  "sub_issues_summary": {
+    "total": 0,
+    "completed": 0,
+    "percent_completed": 0
+  },
+  "issue_dependencies_summary": {
+    "blocked_by": 0,
+    "total_blocked_by": 0,
+    "blocking": 0,
+    "total_blocking": 0
+  },
+  "body": "### Proposal to improve performance\n\nWhen a waiting request cannot be admitted, which is typical under KV-cache pressure, it stays at the head of the waiting queue and `KVCacheManager.get_computed_blocks` → `find_longest_cache_hit` runs again on every step. The walk probes the block-hash table once per hit block, so a request with a long cached prefix pays for the whole walk again on every retry, on the scheduler thread.\n\nI have a local implementation of a narrow fix and would like to know whether this is worth a PR before sending one, because it touches `vllm/v1/core/kv_cache_manager.py` (+126/−5, plus tests) and I could not show an end-to-end gain.\n\n**Idea.** Keep each waiting request's previous hit together with the primary `block_hash` each hit block carried. On the next lookup, keep the remembered blocks up to the first one whose hash changed, and resume the normal walk from there. A block keeps its primary hash exactly as long as it stays cached with unchanged contents, because eviction, hash moves and `reset_prefix_cache` all clear it, so the result equals a full walk. The memo is enabled only for a single full-attention group (`UnitaryKVCacheCoordinator`), with no EAGLE drop and DCP = PCP = 1; everything else keeps the current path. Under KV pressure the hit usually changes only at its tail, which is why per-block revalidation beats invalidating a cached result on any eviction.\n\n**What I measured** (main `a2fb482732`, CPU only, scheduler driven directly with no model forward; workload: 8192-token shared prefix + 256 suffix, 384 output tokens, 2400 × 16-token blocks, 64 running, 400 requests; 5 seeds).\n\n| | main | with the memo |\n|---|---|---|\n| scheduling decisions, per step | — | byte-identical (sha256 of the decision trace, all seeds) |\n| hash-table probes | 736,080 | 265,150 (−64%) |\n| total lookup time | 313.3 ms | 159.4 ms |\n| total `schedule()` time | 1223.8 ms | 1137.4 ms (~−7%, near the ±3% run-to-run noise) |\n\nA single lookup with a still-valid 2048-block hit drops from 956.5 to 75.8 µs.\n\n**What I could not show.** An end-to-end serving A/B (RTX 4090, Qwen3-1.7B, the same workload shape via `prefix_repetition`, 3 alternating rounds) showed no measurable difference: 1577.10 vs 1574.66 output tok/s, inside main's own spread of 1573–1597. At ~33 ms per decode step, ~0.2 ms saved per blocked lookup is too small to see. It might matter with larger prefixes, smaller step times, or many long-prefix requests blocked at once, but I have not measured such a setup.\n\n**Questions for maintainers**\n\n1. Is shaving scheduler CPU time in this scenario something you would take in `kv_cache_manager.py` at this size, or is the bar a demonstrated end-to-end gain?\n2. If it is of interest, is there a workload or configuration where you have seen waiting-queue prefix lookups show up in profiles? I can benchmark against that instead.\n\nRelated but different: #58837 and #54625 change admission *order* based on cache hits, and #61570 speeds up block-pool and hashing hot paths. None of them avoids re-walking the same waiting request's hit.\n\nAI assistance was used to investigate this and draft this issue. I reviewed the code and ran every measurement above myself.\n\n### Your current environment (if you think it is necessary)\n\nCPU measurements: WSL2 Ubuntu 24.04, 32 vCPU, Python 3.12.3, torch 2.13 (CPU). GPU A/B: RTX 4090 24 GB, driver 595.71.05, torch 2.13.0+cu130.\n\n### Before submitting a new issue...\n\n- [x] Make sure you already searched for relevant issues, and asked the chatbot living at the bottom right corner of the [documentation page](https://docs.vllm.ai/en/latest/), which can answer lots of frequently asked questions.\n",
+  "closed_by": null,
+  "reactions": {
+    "url": "https://api.github.com/repos/vllm-project/vllm/issues/61604/reactions",
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "timeline_url": "https://api.github.com/repos/vllm-project/vllm/issues/61604/timeline",
+  "performed_via_github_app": null,
+  "state_reason": null,
+  "pinned_comment": null
+}

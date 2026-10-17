@@ -1,0 +1,7 @@
+FlashInfer kernels are disabled: flashinfer-cubin is not installed and nvcc (CUDA_HOME, CUDA_PATH, PATH or /usr/local/cuda) or ninja (PATH) is missing. Set CUDA_HOME to a CUDA toolkit and put ninja on PATH, or run `vllm download-kernels`.
+Failed to import from vllm._C_AVX2: ModuleNotFoundError("No module named 'vllm._C_AVX2'")
+Casting torch.bfloat16 to torch.float16.
+Error retrieving safetensors: Cannot reach https://huggingface.co/Qwen/Qwen3-0.6B/resolve/main/model.safetensors: offline mode is enabled. To disable it, please unset the `HF_HUB_OFFLINE` environment variable., retrying 1 of 2
+Error retrieving safetensors: Cannot reach https://huggingface.co/Qwen/Qwen3-0.6B/resolve/main/model.safetensors: offline mode is enabled. To disable it, please unset the `HF_HUB_OFFLINE` environment variable.
+CPU backend prefers block_size is multiples of 32, otherwise the performance is not optimized.
+{"steps": 1000, "prefix_tokens": 8192, "schedule_ns": 104999022, "probes": 1512, "lookups": 1000, "blocked_allocations": 1000, "lookup_ns": 82147023, "trace_sha256": "aa5607e257960cc53d37974b99e8160d6fdeb4c89379d6694948c978d265a879", "admitted_after_release": true, "source_root": "/home/minstrel/vllm_lab/worktrees/issue-61604-pr", "source_commit": "a2fb4827324bf023075799ef3d70d347834b8137", "manager_sha256": "3830395cf8b908e89bce522b0a9dc6576c4149f49fc52079c3e9f55918a32967"}

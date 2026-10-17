@@ -1,0 +1,27 @@
+{
+  "rounds": [
+    {
+      "round": 1,
+      "base_schedule_ms": 269.433074,
+      "pr_schedule_ms": 104.999022,
+      "base_probes": 513000,
+      "pr_probes": 1512
+    },
+    {
+      "round": 2,
+      "base_schedule_ms": 264.02049,
+      "pr_schedule_ms": 105.319371,
+      "base_probes": 513000,
+      "pr_probes": 1512
+    },
+    {
+      "round": 3,
+      "base_schedule_ms": 264.200607,
+      "pr_schedule_ms": 106.848397,
+      "base_probes": 513000,
+      "pr_probes": 1512
+    }
+  ],
+  "base_median_ms": 264.200607,
+  "pr_median_ms": 105.319371
+}

@@ -1,0 +1,14 @@
+{
+  "steps": 1000,
+  "prefix_tokens": 8192,
+  "schedule_ns": 105319371,
+  "probes": 1512,
+  "lookups": 1000,
+  "blocked_allocations": 1000,
+  "lookup_ns": 82386002,
+  "trace_sha256": "aa5607e257960cc53d37974b99e8160d6fdeb4c89379d6694948c978d265a879",
+  "admitted_after_release": true,
+  "source_root": "/home/minstrel/vllm_lab/worktrees/issue-61604-pr",
+  "source_commit": "a2fb4827324bf023075799ef3d70d347834b8137",
+  "manager_sha256": "3830395cf8b908e89bce522b0a9dc6576c4149f49fc52079c3e9f55918a32967"
+}
