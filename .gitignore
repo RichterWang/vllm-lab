@@ -27,9 +27,11 @@ diagnose_remote_ssh_memory.py
 AGENT.md
 instruction.md
 interview.md
+REMOTE_EXPERIMENT_PROMPT.md
 
 temp_test.sh
 temp_test.py
 
 # temp
 !benchmarks/issue61604/AGENT.md
+!benchmarks/issue61604/hopper/REMOTE_EXPERIMENT_PROMPT.md
