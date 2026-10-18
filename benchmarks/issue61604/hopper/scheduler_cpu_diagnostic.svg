@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="520" viewBox="0 0 1000 520">
+<rect width="100%" height="100%" fill="white"/>
+<style>text{font-family:Arial,sans-serif;fill:#202124}.label{font-size:19px;font-weight:600}.value{font-size:16px}.note{font-size:14px;fill:#555}.title{font-size:23px;font-weight:700}</style>
+<text class="title" x="500" y="42" text-anchor="middle">Issue #61604: instrumented CPU timing</text>
+<line x1="270.0" y1="95" x2="270.0" y2="390" stroke="#e5e7eb"/>
+<text class="note" x="270.0" y="414" text-anchor="middle">0s</text>
+<line x1="351.2" y1="95" x2="351.2" y2="390" stroke="#e5e7eb"/>
+<text class="note" x="351.2" y="414" text-anchor="middle">2s</text>
+<line x1="432.5" y1="95" x2="432.5" y2="390" stroke="#e5e7eb"/>
+<text class="note" x="432.5" y="414" text-anchor="middle">4s</text>
+<line x1="513.8" y1="95" x2="513.8" y2="390" stroke="#e5e7eb"/>
+<text class="note" x="513.8" y="414" text-anchor="middle">6s</text>
+<line x1="595.0" y1="95" x2="595.0" y2="390" stroke="#e5e7eb"/>
+<text class="note" x="595.0" y="414" text-anchor="middle">8s</text>
+<line x1="676.2" y1="95" x2="676.2" y2="390" stroke="#e5e7eb"/>
+<text class="note" x="676.2" y="414" text-anchor="middle">10s</text>
+<line x1="757.5" y1="95" x2="757.5" y2="390" stroke="#e5e7eb"/>
+<text class="note" x="757.5" y="414" text-anchor="middle">12s</text>
+<line x1="838.8" y1="95" x2="838.8" y2="390" stroke="#e5e7eb"/>
+<text class="note" x="838.8" y="414" text-anchor="middle">14s</text>
+<line x1="920.0" y1="95" x2="920.0" y2="390" stroke="#e5e7eb"/>
+<text class="note" x="920.0" y="414" text-anchor="middle">16s</text>
+<text class="label" x="252" y="165" text-anchor="end">Scheduler.schedule()</text>
+<text class="note" x="260" y="200" text-anchor="end">Base</text>
+<rect x="270" y="182" width="606.4" height="26" rx="3" fill="#64748b"/>
+<text class="value" x="885.4" y="201">14.927 s</text>
+<text class="note" x="260" y="242" text-anchor="end">Patch</text>
+<rect x="270" y="224" width="451.8" height="26" rx="3" fill="#2563eb"/>
+<text class="value" x="730.8" y="243">11.121 s</text>
+<text x="920" y="218" text-anchor="end" font-size="16" font-weight="700" fill="#15803d">CPU time −25.5%</text>
+<text class="label" x="252" y="305" text-anchor="end">get_computed_blocks()</text>
+<text class="note" x="260" y="340" text-anchor="end">Base</text>
+<rect x="270" y="322" width="473.8" height="26" rx="3" fill="#64748b"/>
+<text class="value" x="752.8" y="341">11.663 s</text>
+<text class="note" x="260" y="382" text-anchor="end">Patch</text>
+<rect x="270" y="364" width="261.1" height="26" rx="3" fill="#2563eb"/>
+<text class="value" x="540.1" y="383">6.426 s</text>
+<text x="920" y="358" text-anchor="end" font-size="16" font-weight="700" fill="#15803d">CPU time −44.9%</text>
+<text class="note" x="500" y="462" text-anchor="middle">One matched diagnostic pair · same seed-6161805 trace · 200 requests per arm</text>
+<text class="note" x="500" y="486" text-anchor="middle">Outer CPU timers were instrumented and nested; this is not an end-to-end throughput result.</text>
+</svg>
