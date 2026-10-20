@@ -33,5 +33,3 @@ temp_test.sh
 temp_test.py
 
 # temp
-!benchmarks/issue61604/AGENT.md
-!benchmarks/issue61604/hopper/REMOTE_EXPERIMENT_PROMPT.md
